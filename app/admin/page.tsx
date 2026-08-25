@@ -13,6 +13,8 @@ import {
   Pencil,
   Zap,
   MessageCircleWarning,
+  Printer,
+  X,
 } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
@@ -63,10 +65,25 @@ function QrDownloadButton({ chipCode }: { chipCode: string }) {
   );
 }
 
-function ChipDetailRow({ chip }: { chip: ChipMetricRow }) {
+function ChipDetailRow({
+  chip,
+  selected,
+  onToggleSelect,
+}: {
+  chip: ChipMetricRow;
+  selected: boolean;
+  onToggleSelect: (chipCode: string) => void;
+}) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => onToggleSelect(chip.chip_code)}
+          aria-label={`Seleccionar ${chip.chip_code} para imprimir`}
+          className="h-4 w-4 rounded border-white/20 bg-boreas-navy accent-boreas-cyan"
+        />
         <span className="font-mono text-white/80">{chip.chip_code}</span>
         <span className="text-xs text-white/40">{MODE_LABEL[chip.mode]}</span>
         <span
@@ -100,9 +117,11 @@ interface ClientCardProps {
   chips: ChipMetricRow[];
   expanded: boolean;
   onToggle: () => void;
+  selectedCodes: Set<string>;
+  onToggleSelect: (chipCode: string) => void;
 }
 
-function ClientCard({ client, chips, expanded, onToggle }: ClientCardProps) {
+function ClientCard({ client, chips, expanded, onToggle, selectedCodes, onToggleSelect }: ClientCardProps) {
   const hasAlert = chips.some(chipNeedsAttention);
 
   return (
@@ -143,7 +162,14 @@ function ClientCard({ client, chips, expanded, onToggle }: ClientCardProps) {
           {chips.length === 0 ? (
             <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
           ) : (
-            chips.map((chip) => <ChipDetailRow key={chip.chip_id} chip={chip} />)
+            chips.map((chip) => (
+              <ChipDetailRow
+                key={chip.chip_id}
+                chip={chip}
+                selected={selectedCodes.has(chip.chip_code)}
+                onToggleSelect={onToggleSelect}
+              />
+            ))
           )}
         </div>
       )}
@@ -164,6 +190,7 @@ export default function AdminPage() {
 
   const [filter, setFilter] = useState("");
   const [expandedClientIds, setExpandedClientIds] = useState<Set<string>>(new Set());
+  const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     Promise.all([
@@ -239,8 +266,19 @@ export default function AdminPage() {
     });
   }
 
+  function toggleSelectChip(chipCode: string) {
+    setSelectedCodes((prev) => {
+      const next = new Set(prev);
+      if (next.has(chipCode)) next.delete(chipCode);
+      else next.add(chipCode);
+      return next;
+    });
+  }
+
+  const printHref = `/admin/imprimir?codes=${encodeURIComponent(Array.from(selectedCodes).join(","))}`;
+
   return (
-    <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+    <main className={`min-h-screen bg-boreas-navy-deep px-5 py-8 ${selectedCodes.size > 0 ? "pb-20" : ""}`}>
       <header className="mb-4 flex items-center justify-between">
         <BoreasBrandmark />
         <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>
@@ -312,6 +350,8 @@ export default function AdminPage() {
                 chips={chipsByClient.get(client.client_id) ?? []}
                 expanded={expandedClientIds.has(client.client_id)}
                 onToggle={() => toggleClient(client.client_id)}
+                selectedCodes={selectedCodes}
+                onToggleSelect={toggleSelectChip}
               />
             ))}
 
@@ -328,13 +368,41 @@ export default function AdminPage() {
                   </span>
                 </div>
                 {filteredUnassignedChips.map((chip) => (
-                  <ChipDetailRow key={chip.chip_id} chip={chip} />
+                  <ChipDetailRow
+                    key={chip.chip_id}
+                    chip={chip}
+                    selected={selectedCodes.has(chip.chip_code)}
+                    onToggleSelect={toggleSelectChip}
+                  />
                 ))}
               </div>
             )}
           </div>
         )}
       </section>
+
+      {selectedCodes.size > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t border-white/10 bg-boreas-navy-deep/95 px-5 py-3 backdrop-blur">
+          <span className="text-sm text-white/70">{selectedCodes.size} chip(s) seleccionados</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedCodes(new Set())}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white/60 hover:bg-white/10"
+            >
+              <X size={12} /> Limpiar
+            </button>
+            <a
+              href={printHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-violet px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
+            >
+              <Printer size={14} /> Imprimir QR
+            </a>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
