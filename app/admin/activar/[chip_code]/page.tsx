@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import InstallerExpress from "@/components/InstallerExpress";
@@ -6,6 +7,10 @@ export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: { chip_code: string };
+}
+
+export function generateMetadata({ params }: PageProps): Metadata {
+  return { title: `Activar ${params.chip_code} · Boreas NFC Hub` };
 }
 
 export default async function ActivarChipPage({ params }: PageProps) {
