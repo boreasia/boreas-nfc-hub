@@ -26,4 +26,16 @@ export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseService
     autoRefreshToken: false,
     persistSession: false,
   },
+  // CRÍTICO: Next.js App Router cachea fetch() indefinidamente por defecto
+  // (Data Cache), incluso cuando el origen no manda Cache-Control y aunque
+  // el route/page tenga `export const dynamic = "force-dynamic"` — esa
+  // config solo cubre fetches que Next puede analizar estáticamente en ESE
+  // segmento, no garantiza nada para un cliente HTTP de una librería externa
+  // compartido como singleton entre rutas. Sin esto, un chip consultado una
+  // vez mientras is_active=false queda "congelado" así para /r/[chip_code]
+  // aunque se active después, hasta el próximo deploy/restart — reproducido
+  // y confirmado en verificación manual antes de mergear.
+  global: {
+    fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+  },
 });
