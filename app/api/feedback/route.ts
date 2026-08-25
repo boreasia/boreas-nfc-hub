@@ -23,6 +23,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "chip_id y rating (1-5) son obligatorios." }, { status: 400 });
   }
 
+  // Esta tabla es para captura privada de feedback NEGATIVO (1-3 estrellas,
+  // ver comment en schema.sql sobre `feedbacks`) — un rating alto se redirige
+  // directo a la reseña pública y nunca debería llegar aquí. El gate en
+  // ReviewFunnel.tsx (solo llama a este endpoint si rating < 4) es UX, no
+  // seguridad: sin este chequeo, cualquiera podía insertar rating 4-5 llamando
+  // al endpoint directo.
+  if (rating > 3) {
+    return NextResponse.json(
+      { error: "Este endpoint solo acepta feedback negativo (rating 1-3)." },
+      { status: 400 }
+    );
+  }
+
   // 1. Traemos el chip + comercio para saber a quién notificar.
   const { data: chip, error: chipError } = await supabaseAdmin
     .from("chips")
