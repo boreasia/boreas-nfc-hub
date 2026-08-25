@@ -125,7 +125,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           <select
             value={billingStatus}
             onChange={(e) => setBillingStatus(e.target.value as BillingStatus)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           >
             {BILLING_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>

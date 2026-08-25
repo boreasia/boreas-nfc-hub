@@ -87,7 +87,7 @@ export default function AdminFeedbackPage() {
         <select
           value={selectedClientId}
           onChange={(e) => setSelectedClientId(e.target.value)}
-          className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+          className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
         >
           <option value="">Todos los comercios</option>
           {clients.map((c) => (
