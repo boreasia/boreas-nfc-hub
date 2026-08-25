@@ -212,7 +212,7 @@ export default function InstallerExpress({
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               placeholder="Ej: Restaurante LOS34"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
           <div>
@@ -223,7 +223,7 @@ export default function InstallerExpress({
               value={ownerWhatsapp}
               onChange={(e) => setOwnerWhatsapp(e.target.value)}
               placeholder="+57 300 000 0000"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
           <div>
@@ -234,7 +234,7 @@ export default function InstallerExpress({
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://…"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
         </section>
@@ -280,7 +280,7 @@ export default function InstallerExpress({
             value={destinationUrl}
             onChange={(e) => setDestinationUrl(e.target.value)}
             placeholder="https://…"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </section>
       )}

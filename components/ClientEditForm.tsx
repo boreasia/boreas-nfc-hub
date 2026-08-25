@@ -91,7 +91,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           <input
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
         <div>
@@ -101,7 +101,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           <input
             value={ownerWhatsapp}
             onChange={(e) => setOwnerWhatsapp(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
         <div>
@@ -112,7 +112,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             value={logoUrl}
             onChange={(e) => setLogoUrl(e.target.value)}
             placeholder="https://…"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
       </section>
@@ -145,7 +145,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             value={monthlyFee}
             onChange={(e) => setMonthlyFee(e.target.value)}
             placeholder="0"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
         <div>
@@ -156,7 +156,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             type="date"
             value={nextBillingDate}
             onChange={(e) => setNextBillingDate(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
       </section>

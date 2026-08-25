@@ -336,7 +336,7 @@ export default function AdminPage() {
             onChange={(e) => setChipCodeInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="BOREAS-001"
-            className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
           <button
             type="button"
@@ -359,7 +359,7 @@ export default function AdminPage() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Buscar por comercio o código de chip…"
-          className="mb-4 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+          className="mb-4 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
         />
 
         {loadingData ? (
