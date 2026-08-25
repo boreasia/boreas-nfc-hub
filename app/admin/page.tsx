@@ -254,6 +254,27 @@ export default function AdminPage() {
 
   const normalizedFilter = filter.trim().toLowerCase();
 
+  // Si el filtro coincide con un código de chip dentro de un comercio
+  // colapsado, lo expandimos automáticamente para mostrar el match en vez de
+  // obligar a abrirlo a mano. Solo agrega expansiones, nunca las quita, para
+  // no pisar lo que el usuario ya abrió manualmente.
+  useEffect(() => {
+    if (!normalizedFilter) return;
+    setExpandedClientIds((prev) => {
+      let changed = false;
+      const next = new Set(prev);
+      for (const [clientId, chips] of chipsByClient) {
+        if (next.has(clientId)) continue;
+        const hasMatch = chips.some((chip) => chip.chip_code.toLowerCase().includes(normalizedFilter));
+        if (hasMatch) {
+          next.add(clientId);
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [normalizedFilter, chipsByClient]);
+
   const filteredClients = useMemo(() => {
     if (!normalizedFilter) return clients;
     return clients.filter((client) => {
