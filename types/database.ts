@@ -139,7 +139,18 @@ export interface Database {
           notified?: boolean;
         };
         Update: Partial<Omit<Feedback, "id">>;
-        Relationships: [];
+        // Necesario para que `.select("*, chips(*, clients(*))")` (usado en
+        // app/api/feedback/list) resuelva el join embebido en vez de
+        // colapsar a never — mismo motivo que Relationships en chips arriba.
+        Relationships: [
+          {
+            foreignKeyName: "feedbacks_chip_id_fkey";
+            columns: ["chip_id"];
+            isOneToOne: false;
+            referencedRelation: "chips";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: Record<string, never>;

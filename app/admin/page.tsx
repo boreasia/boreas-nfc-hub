@@ -3,7 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, Search, ChevronDown, AlertTriangle, Download, Inbox, Pencil, Zap } from "lucide-react";
+import {
+  Loader2,
+  Search,
+  ChevronDown,
+  AlertTriangle,
+  Download,
+  Inbox,
+  Pencil,
+  Zap,
+  MessageCircleWarning,
+} from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
 
@@ -235,7 +245,16 @@ export default function AdminPage() {
         <BoreasBrandmark />
         <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>
       </header>
-      <div className="mb-6 h-0.5 w-full bg-gradient-to-r from-boreas-cyan to-boreas-violet" />
+      <div className="mb-4 h-0.5 w-full bg-gradient-to-r from-boreas-cyan to-boreas-violet" />
+
+      <div className="mb-6 flex justify-end">
+        <Link
+          href="/admin/feedback"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
+        >
+          <MessageCircleWarning size={14} /> Ver feedback negativo
+        </Link>
+      </div>
 
       <section className="mb-8">
         <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">

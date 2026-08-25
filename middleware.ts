@@ -48,5 +48,6 @@ export const config = {
     "/api/chips/metrics",
     "/api/clients",
     "/api/clients/:path*",
+    "/api/feedback/list",
   ],
 };
