@@ -15,6 +15,7 @@ import {
   MessageCircleWarning,
   Printer,
   X,
+  Settings,
 } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
@@ -135,10 +136,20 @@ function ClientCard({ client, chips, expanded, onToggle, selectedCodes, onToggle
       >
         <div className="flex items-center justify-between">
           <span className="font-medium text-white">{client.business_name}</span>
-          <ChevronDown
-            size={16}
-            className={`text-white/40 transition-transform ${expanded ? "rotate-180" : ""}`}
-          />
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/admin/comercios/${client.client_id}/editar`}
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`Editar ${client.business_name}`}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white/70"
+            >
+              <Settings size={14} />
+            </Link>
+            <ChevronDown
+              size={16}
+              className={`text-white/40 transition-transform ${expanded ? "rotate-180" : ""}`}
+            />
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-white/50">
           <span>{client.active_chips} chips activos</span>
