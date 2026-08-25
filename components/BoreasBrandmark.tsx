@@ -3,14 +3,23 @@
 // "BOREAS" en Cormorant + "NFC HUB" en Inter cian debajo.
 interface BoreasBrandmarkProps {
   size?: "default" | "small";
+  // "dark" (default): "BOREAS" en blanco, para fondos navy — todo el resto
+  // de la app. "light": "BOREAS" en navy, para fondos claros (ej. la hoja
+  // de impresión de QR, que es blanca).
+  variant?: "dark" | "light";
 }
 
-export default function BoreasBrandmark({ size = "default" }: BoreasBrandmarkProps) {
+export default function BoreasBrandmark({ size = "default", variant = "dark" }: BoreasBrandmarkProps) {
   const isSmall = size === "small";
+  const isLight = variant === "light";
 
   return (
     <div className="leading-none">
-      <p className={`font-cormorant font-bold text-white ${isSmall ? "text-lg" : "text-2xl"}`}>
+      <p
+        className={`font-cormorant font-bold ${isLight ? "text-boreas-navy-deep" : "text-white"} ${
+          isSmall ? "text-lg" : "text-2xl"
+        }`}
+      >
         BOREAS
       </p>
       <p
