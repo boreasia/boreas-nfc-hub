@@ -36,9 +36,9 @@ const BILLING_LABEL: Record<BillingStatus, string> = {
 };
 
 const BILLING_BADGE_CLASS: Record<BillingStatus, string> = {
-  al_dia: "bg-boreas-cyan/10 text-boreas-cyan",
-  pendiente: "bg-amber-400/10 text-amber-400",
-  atrasado: "bg-red-400/10 text-red-400",
+  al_dia: "bg-status-positive/10 text-status-positive",
+  pendiente: "bg-status-pending/10 text-status-pending",
+  atrasado: "bg-status-negative/10 text-status-negative",
 };
 
 function chipNeedsAttention(chip: ChipMetricRow): boolean {
@@ -47,7 +47,7 @@ function chipNeedsAttention(chip: ChipMetricRow): boolean {
 
 function AttentionBadge({ days }: { days: number }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/10 px-2 py-0.5 text-xs text-amber-400">
+    <span className="inline-flex items-center gap-1 rounded-full bg-status-negative/10 px-2 py-0.5 text-xs text-status-negative">
       <AlertTriangle size={12} />
       Sin actividad hace {days}d
     </span>
@@ -89,7 +89,7 @@ function ChipDetailRow({
         <span className="text-xs text-white/40">{MODE_LABEL[chip.mode]}</span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs ${
-            chip.is_active ? "bg-boreas-cyan/10 text-boreas-cyan" : "bg-white/5 text-white/40"
+            chip.is_active ? "bg-status-positive/10 text-status-positive" : "bg-white/5 text-white/40"
           }`}
         >
           {chip.is_active ? "Activo" : "Pendiente"}
@@ -161,7 +161,7 @@ function ClientCard({ client, chips, expanded, onToggle, selectedCodes, onToggle
             {BILLING_LABEL[client.billing_status]}
           </span>
           {hasAlert && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-400/10 px-2 py-0.5 text-amber-400">
+            <span className="inline-flex items-center gap-1 rounded-full bg-status-negative/10 px-2 py-0.5 text-status-negative">
               <AlertTriangle size={12} /> Requiere atención
             </span>
           )}

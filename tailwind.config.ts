@@ -5,11 +5,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Identidad de marca: SOLO para acentos de marca (headers, botones
+        // primarios, gradiente, focus rings) — no para indicar estados.
         boreas: {
           "navy-deep": "#0A1520",
           navy: "#1B2E44",
           cyan: "#4AB3E8",
           violet: "#7B4FBF",
+        },
+        // Paleta semántica de estados: badges de billing_status, actividad
+        // de chips, alertas. Separada de boreas.cyan/violet a propósito para
+        // no mezclar "esto es de Boreas" con "esto necesita tu atención".
+        status: {
+          positive: "#34D399", // al_dia / chip activo
+          pending: "#FBBF24", // pendiente
+          negative: "#F87171", // atrasado / alertas
         },
       },
       fontFamily: {
