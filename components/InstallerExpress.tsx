@@ -134,6 +134,7 @@ export default function InstallerExpress({
 
   return (
     <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+      <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
@@ -296,6 +297,7 @@ export default function InstallerExpress({
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
         {isEditing ? "Guardar cambios" : "Vincular y activar chip"}
       </button>
+      </div>
     </main>
   );
 }

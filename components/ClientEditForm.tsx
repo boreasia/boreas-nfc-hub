@@ -69,6 +69,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
 
   return (
     <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+      <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center gap-3">
         <Link
           href="/admin"
@@ -177,6 +178,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
         Guardar cambios
       </button>
+      </div>
     </main>
   );
 }

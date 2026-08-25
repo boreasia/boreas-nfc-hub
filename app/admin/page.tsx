@@ -356,6 +356,7 @@ export default function AdminPage() {
 
   return (
     <main className={`min-h-screen bg-boreas-navy-deep px-5 py-8 ${selectedCodes.size > 0 ? "pb-20" : ""}`}>
+      <div className="mx-auto max-w-2xl">
       <header className="mb-4 flex items-center justify-between">
         <BoreasBrandmark />
         <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>
@@ -462,26 +463,29 @@ export default function AdminPage() {
           </div>
         )}
       </section>
+      </div>
 
       {selectedCodes.size > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t border-white/10 bg-boreas-navy-deep/95 px-5 py-3 backdrop-blur">
-          <span className="text-sm text-white/70">{selectedCodes.size} chip(s) seleccionados</span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setSelectedCodes(new Set())}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white/60 hover:bg-white/10"
-            >
-              <X size={12} /> Limpiar
-            </button>
-            <a
-              href={printHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-violet px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
-            >
-              <Printer size={14} /> Imprimir QR
-            </a>
+        <div className="fixed inset-x-0 bottom-0 z-10 border-t border-white/10 bg-boreas-navy-deep/95 backdrop-blur">
+          <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-3">
+            <span className="text-sm text-white/70">{selectedCodes.size} chip(s) seleccionados</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedCodes(new Set())}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white/60 hover:bg-white/10"
+              >
+                <X size={12} /> Limpiar
+              </button>
+              <a
+                href={printHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-violet px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
+              >
+                <Printer size={14} /> Imprimir QR
+              </a>
+            </div>
           </div>
         </div>
       )}
