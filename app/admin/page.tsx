@@ -355,8 +355,20 @@ export default function AdminPage() {
   const printHref = `/admin/imprimir?codes=${encodeURIComponent(Array.from(selectedCodes).join(","))}`;
 
   return (
-    <main className={`min-h-screen bg-boreas-navy-deep px-5 py-8 ${selectedCodes.size > 0 ? "pb-20" : ""}`}>
-      <div className="mx-auto max-w-2xl">
+    <main
+      className={`relative overflow-hidden bg-boreas-navy-deep px-5 py-8 ${
+        selectedCodes.size > 0 ? "pb-20" : ""
+      } min-h-screen`}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(123,79,191,0.6) 0%, rgba(74,179,232,0.25) 45%, transparent 70%)",
+        }}
+      />
+      <div className="relative z-10 mx-auto max-w-2xl">
       <header className="mb-4 flex items-center justify-between">
         <BoreasBrandmark />
         <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>

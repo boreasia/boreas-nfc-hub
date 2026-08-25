@@ -113,21 +113,31 @@ export default function InstallerExpress({
 
   if (success) {
     return (
-      <main className="flex min-h-screen animate-fade-in flex-col items-center justify-center bg-boreas-navy-deep px-6 text-center">
-        <CheckCircle2 size={48} className="text-boreas-cyan" />
-        <h1 className="mt-4 text-xl font-semibold text-white">
-          {isEditing ? "Chip actualizado" : "Chip activado"}
-        </h1>
-        <p className="mt-2 text-sm text-white/50">
-          <span className="font-mono text-white/80">{chipCode}</span>{" "}
-          {isEditing ? "quedó con los nuevos datos." : "ya está en producción."}
-        </p>
-        <Link
-          href="/admin"
-          className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 hover:bg-white/10"
-        >
-          <ArrowLeft size={14} /> Volver al panel
-        </Link>
+      <main className="relative flex min-h-screen animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 text-center">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(123,79,191,0.6) 0%, rgba(74,179,232,0.25) 45%, transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 flex flex-col items-center">
+          <CheckCircle2 size={48} className="text-boreas-cyan" />
+          <h1 className="mt-4 text-xl font-semibold text-white">
+            {isEditing ? "Chip actualizado" : "Chip activado"}
+          </h1>
+          <p className="mt-2 text-sm text-white/50">
+            <span className="font-mono text-white/80">{chipCode}</span>{" "}
+            {isEditing ? "quedó con los nuevos datos." : "ya está en producción."}
+          </p>
+          <Link
+            href="/admin"
+            className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 hover:bg-white/10"
+          >
+            <ArrowLeft size={14} /> Volver al panel
+          </Link>
+        </div>
       </main>
     );
   }
@@ -292,7 +302,7 @@ export default function InstallerExpress({
         type="button"
         onClick={handleActivate}
         disabled={submitting}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+        className="focus-gradient flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
         {isEditing ? "Guardar cambios" : "Vincular y activar chip"}

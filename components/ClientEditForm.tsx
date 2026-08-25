@@ -173,7 +173,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         type="button"
         onClick={handleSave}
         disabled={submitting}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+        className="focus-gradient flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
         Guardar cambios
