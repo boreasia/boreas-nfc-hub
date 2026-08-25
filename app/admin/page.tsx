@@ -16,6 +16,7 @@ import {
   Printer,
   X,
   Settings,
+  Sparkles,
 } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
@@ -415,10 +416,13 @@ export default function AdminPage() {
         ) : dataError ? (
           <p className="text-sm text-red-400">{dataError}</p>
         ) : clients.length === 0 && unassignedChips.length === 0 ? (
-          <p className="text-sm text-white/40">
-            Aún no hay chips generados. Corre <code className="text-white/60">scripts/generate-chips.mjs</code>{" "}
-            para crear el primer lote.
-          </p>
+          <div className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-boreas-navy px-4 py-10 text-center">
+            <Sparkles size={24} className="text-white/30" />
+            <p className="text-sm font-medium text-white/70">Todavía no hay comercios activados</p>
+            <p className="text-sm text-white/40">
+              Activa tu primer chip con el código de arriba y aparecerá aquí.
+            </p>
+          </div>
         ) : (
           <div className="flex flex-col gap-3">
             {filteredClients.map((client) => (
