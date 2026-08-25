@@ -17,5 +17,14 @@ export default async function ActivarChipPage({ params }: PageProps) {
 
   if (!chip) notFound();
 
-  return <InstallerExpress chipCode={chip.chip_code} chipId={chip.id} />;
+  return (
+    <InstallerExpress
+      chipCode={chip.chip_code}
+      chipId={chip.id}
+      isEditing={chip.is_active}
+      initialClientId={chip.client_id}
+      initialMode={chip.mode}
+      initialDestinationUrl={chip.destination_url}
+    />
+  );
 }

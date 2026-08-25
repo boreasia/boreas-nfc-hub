@@ -8,6 +8,10 @@ import type { Client, ChipMode } from "@/types/database";
 interface InstallerExpressProps {
   chipCode: string;
   chipId: string;
+  isEditing?: boolean;
+  initialClientId?: string | null;
+  initialMode?: ChipMode;
+  initialDestinationUrl?: string | null;
 }
 
 const MODE_OPTIONS: { value: ChipMode; label: string; helper: string }[] = [
@@ -17,19 +21,26 @@ const MODE_OPTIONS: { value: ChipMode; label: string; helper: string }[] = [
   { value: "interactive_menu", label: "Menú interactivo", helper: "Carta con pedido por WhatsApp" },
 ];
 
-export default function InstallerExpress({ chipCode, chipId }: InstallerExpressProps) {
+export default function InstallerExpress({
+  chipCode,
+  chipId,
+  isEditing = false,
+  initialClientId = null,
+  initialMode = "review_funnel",
+  initialDestinationUrl = null,
+}: InstallerExpressProps) {
   const [clients, setClients] = useState<Client[]>([]);
   const [loadingClients, setLoadingClients] = useState(true);
 
-  const [mode, setMode] = useState<"existing" | "new">("new");
-  const [selectedClientId, setSelectedClientId] = useState<string>("");
+  const [mode, setMode] = useState<"existing" | "new">(isEditing ? "existing" : "new");
+  const [selectedClientId, setSelectedClientId] = useState<string>(initialClientId ?? "");
 
   const [businessName, setBusinessName] = useState("");
   const [ownerWhatsapp, setOwnerWhatsapp] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
 
-  const [chipMode, setChipMode] = useState<ChipMode>("review_funnel");
-  const [destinationUrl, setDestinationUrl] = useState("");
+  const [chipMode, setChipMode] = useState<ChipMode>(initialMode);
+  const [destinationUrl, setDestinationUrl] = useState(initialDestinationUrl ?? "");
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +79,7 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
     setError(null);
 
     try {
-      const res = await fetch("/api/chips/activate", {
+      const res = await fetch(isEditing ? "/api/chips/update" : "/api/chips/activate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +100,7 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? "No se pudo activar el chip.");
+        throw new Error(body.error ?? (isEditing ? "No se pudo actualizar el chip." : "No se pudo activar el chip."));
       }
 
       setSuccess(true);
@@ -104,9 +115,12 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-boreas-navy-deep px-6 text-center">
         <CheckCircle2 size={48} className="text-boreas-cyan" />
-        <h1 className="mt-4 text-xl font-semibold text-white">Chip activado</h1>
+        <h1 className="mt-4 text-xl font-semibold text-white">
+          {isEditing ? "Chip actualizado" : "Chip activado"}
+        </h1>
         <p className="mt-2 text-sm text-white/50">
-          <span className="font-mono text-white/80">{chipCode}</span> ya está en producción.
+          <span className="font-mono text-white/80">{chipCode}</span>{" "}
+          {isEditing ? "quedó con los nuevos datos." : "ya está en producción."}
         </p>
         <Link
           href="/admin"
@@ -130,7 +144,9 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">Instalador Express</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">
+              {isEditing ? "Editar chip" : "Instalador Express"}
+            </p>
             <h1 className="mt-1 font-mono text-lg text-white">{chipCode}</h1>
           </div>
         </div>
@@ -278,7 +294,7 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
         className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-        Vincular y activar chip
+        {isEditing ? "Guardar cambios" : "Vincular y activar chip"}
       </button>
     </main>
   );

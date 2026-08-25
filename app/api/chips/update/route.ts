@@ -3,9 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { resolveClientId } from "@/lib/resolveClient";
 import type { ChipMode } from "@/types/database";
 
-interface ActivatePayload {
+interface UpdatePayload {
   chip_id: string;
-  chip_code?: string;
   mode: ChipMode;
   destination_url?: string | null;
   client:
@@ -15,8 +14,12 @@ interface ActivatePayload {
 
 const VALID_MODES: ChipMode[] = ["review_funnel", "instagram", "pdf_menu", "interactive_menu"];
 
+// Edita un chip que YA está activo: reasignar comercio, cambiar mode y/o
+// destination_url. A diferencia de /api/chips/activate, esto no toca
+// is_active ni activated_at — esos solo se fijan la primera vez que el chip
+// se instala. Para chips todavía inactivos, usa /api/chips/activate.
 export async function POST(request: NextRequest) {
-  let body: ActivatePayload;
+  let body: UpdatePayload;
 
   try {
     body = await request.json();
@@ -42,30 +45,42 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 1. Resolver el client_id: o usamos uno existente, o creamos uno nuevo.
+  const { data: existingChip, error: fetchError } = await supabaseAdmin
+    .from("chips")
+    .select("id, is_active")
+    .eq("id", chip_id)
+    .maybeSingle();
+
+  if (fetchError || !existingChip) {
+    return NextResponse.json({ error: "Chip no encontrado." }, { status: 404 });
+  }
+  if (!existingChip.is_active) {
+    return NextResponse.json(
+      { error: "Este chip aún no está activo. Usa la activación inicial en vez de editar." },
+      { status: 400 }
+    );
+  }
+
   const resolved = await resolveClientId(client);
   if (resolved.error) {
     return NextResponse.json({ error: resolved.error }, { status: 400 });
   }
   const clientId = resolved.clientId;
 
-  // 2. Activar el chip: vincular client_id, mode, destination_url, is_active=true.
   const { data: updatedChip, error: chipError } = await supabaseAdmin
     .from("chips")
     .update({
       client_id: clientId,
       mode,
       destination_url: destination_url ?? null,
-      is_active: true,
-      activated_at: new Date().toISOString(),
     })
     .eq("id", chip_id)
     .select()
     .single();
 
   if (chipError || !updatedChip) {
-    console.error("[chips/activate] error activando chip:", chipError?.message);
-    return NextResponse.json({ error: "No se pudo activar el chip." }, { status: 500 });
+    console.error("[chips/update] error actualizando chip:", chipError?.message);
+    return NextResponse.json({ error: "No se pudo actualizar el chip." }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, chip: updatedChip });

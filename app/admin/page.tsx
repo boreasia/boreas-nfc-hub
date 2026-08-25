@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, Search, ChevronDown, AlertTriangle, Download, Inbox } from "lucide-react";
+import { Loader2, Search, ChevronDown, AlertTriangle, Download, Inbox, Pencil, Zap } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
 
@@ -71,6 +72,13 @@ function ChipDetailRow({ chip }: { chip: ChipMetricRow }) {
         <span className="text-xs text-white/50">
           {chip.total_taps} taps · {chip.negative_feedbacks} feedback
         </span>
+        <Link
+          href={`/admin/activar/${encodeURIComponent(chip.chip_code)}`}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
+        >
+          {chip.is_active ? <Pencil size={12} /> : <Zap size={12} />}
+          {chip.is_active ? "Editar" : "Activar"}
+        </Link>
         <QrDownloadButton chipCode={chip.chip_code} />
       </div>
     </div>
