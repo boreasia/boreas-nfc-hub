@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
 import ReviewFunnel from "@/components/ReviewFunnel";
-import InstallerExpress from "@/components/InstallerExpress";
 import InteractiveMenu from "@/components/InteractiveMenu";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
 
@@ -54,9 +53,25 @@ export default async function ChipRouterPage({ params }: PageProps) {
 
   await registerTapEvent(chip.id);
 
-  // Caso 2: chip inactivo o sin comercio asignado → pantalla de instalación express.
+  // Caso 2: chip inactivo o sin comercio asignado → pantalla neutra pública.
+  // IMPORTANTE: esta ruta es pública y sin autenticación (middleware.ts solo
+  // protege /admin/:path*), así que NUNCA debe exponer aquí el formulario de
+  // activación (Instalador Express) — cualquiera que toque/escanee el chip
+  // antes de la visita comercial podría auto-activarlo con datos arbitrarios.
+  // La única forma de activar un chip es desde /admin, protegido por Basic Auth.
   if (!chip.is_active || !chip.client_id) {
-    return <InstallerExpress chipCode={chip.chip_code} chipId={chip.id} />;
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
+        <BoreasBrandmark />
+        <div>
+          <h1 className="text-2xl font-semibold text-white">Este código está en proceso de instalación</h1>
+          <p className="mt-2 text-sm text-white/50">
+            Código: <span className="font-mono text-white/80">{chip_code}</span>
+          </p>
+          <p className="mt-4 text-sm text-white/40">Vuelve a intentarlo más tarde.</p>
+        </div>
+      </main>
+    );
   }
 
   // Caso 3: chip activo, se decide según el modo.

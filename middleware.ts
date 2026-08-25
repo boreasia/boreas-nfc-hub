@@ -32,6 +32,21 @@ export function middleware(request: NextRequest) {
   });
 }
 
+// También protegemos las rutas de API que mutan/leen datos administrativos:
+// el matcher de Next solo cubre /admin/:path* por defecto, pero esas rutas
+// se llaman por fetch() directo (sin pasar por el middleware de /admin), así
+// que sin esto cualquiera podría, por ejemplo, POSTear a /api/chips/activate
+// sin autenticarse. Dejamos fuera /api/feedback (lo llama el cliente final
+// desde la ruta pública /r/[chip_code]) y /api/chips/:chip_code/qr (solo
+// genera una imagen de un código que ya es público).
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/chips/activate",
+    "/api/chips/update",
+    "/api/chips/lookup",
+    "/api/chips/metrics",
+    "/api/clients",
+    "/api/clients/:path*",
+  ],
 };
