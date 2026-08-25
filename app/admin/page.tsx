@@ -4,9 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Search, ChevronDown, AlertTriangle, Download, Inbox } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
-import type { ChipMetricRow, ClientSummaryRow, BillingStatus } from "@/types/database";
+import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
 
 const ALERT_THRESHOLD_DAYS = 15;
+
+const MODE_LABEL: Record<ChipMode, string> = {
+  review_funnel: "Reseñas",
+  instagram: "Instagram",
+  pdf_menu: "PDF",
+  interactive_menu: "Menú interactivo",
+};
 
 const BILLING_LABEL: Record<BillingStatus, string> = {
   al_dia: "Al día",
@@ -50,7 +57,7 @@ function ChipDetailRow({ chip }: { chip: ChipMetricRow }) {
     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-white/80">{chip.chip_code}</span>
-        <span className="text-xs text-white/40">{chip.mode}</span>
+        <span className="text-xs text-white/40">{MODE_LABEL[chip.mode]}</span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs ${
             chip.is_active ? "bg-boreas-cyan/10 text-boreas-cyan" : "bg-white/5 text-white/40"
@@ -62,7 +69,7 @@ function ChipDetailRow({ chip }: { chip: ChipMetricRow }) {
       </div>
       <div className="flex items-center gap-4">
         <span className="text-xs text-white/50">
-          {chip.total_taps} taps · {chip.negative_feedbacks} feedback -
+          {chip.total_taps} taps · {chip.negative_feedbacks} feedback
         </span>
         <QrDownloadButton chipCode={chip.chip_code} />
       </div>
@@ -85,6 +92,8 @@ function ClientCard({ client, chips, expanded, onToggle }: ClientCardProps) {
       <button
         type="button"
         onClick={onToggle}
+        aria-expanded={expanded}
+        aria-controls={`chips-${client.client_id}`}
         className="flex w-full flex-col gap-2 px-4 py-3 text-left hover:bg-white/[0.03]"
       >
         <div className="flex items-center justify-between">
@@ -112,7 +121,7 @@ function ClientCard({ client, chips, expanded, onToggle }: ClientCardProps) {
       </button>
 
       {expanded && (
-        <div className="bg-boreas-navy-deep/60">
+        <div id={`chips-${client.client_id}`} className="bg-boreas-navy-deep/60">
           {chips.length === 0 ? (
             <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
           ) : (
