@@ -113,6 +113,46 @@ function ChipDetailRow({
   );
 }
 
+function SkeletonChipRow() {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 animate-pulse">
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-4 rounded bg-white/10" />
+        <div className="h-3 w-20 rounded bg-white/10" />
+        <div className="h-4 w-14 rounded-full bg-white/10" />
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="h-3 w-16 rounded bg-white/10" />
+        <div className="h-6 w-20 rounded-lg bg-white/10" />
+      </div>
+    </div>
+  );
+}
+
+function SkeletonClientCard({ expanded = false }: { expanded?: boolean }) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
+      <div className="flex flex-col gap-2 px-4 py-3 animate-pulse">
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-32 rounded bg-white/10" />
+          <div className="h-4 w-4 rounded bg-white/10" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-3 w-20 rounded bg-white/10" />
+          <div className="h-3 w-14 rounded bg-white/10" />
+          <div className="h-4 w-16 rounded-full bg-white/10" />
+        </div>
+      </div>
+      {expanded && (
+        <div className="bg-boreas-navy-deep/60">
+          <SkeletonChipRow />
+          <SkeletonChipRow />
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface ClientCardProps {
   client: ClientSummaryRow;
   chips: ChipMetricRow[];
@@ -168,22 +208,26 @@ function ClientCard({ client, chips, expanded, onToggle, selectedCodes, onToggle
         </div>
       </button>
 
-      {expanded && (
-        <div id={`chips-${client.client_id}`} className="bg-boreas-navy-deep/60">
-          {chips.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
-          ) : (
-            chips.map((chip) => (
-              <ChipDetailRow
-                key={chip.chip_id}
-                chip={chip}
-                selected={selectedCodes.has(chip.chip_code)}
-                onToggleSelect={onToggleSelect}
-              />
-            ))
-          )}
-        </div>
-      )}
+      <div
+        id={`chips-${client.client_id}`}
+        aria-hidden={!expanded}
+        className={`overflow-hidden bg-boreas-navy-deep/60 transition-all duration-300 ease-in-out ${
+          expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        {chips.length === 0 ? (
+          <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
+        ) : (
+          chips.map((chip) => (
+            <ChipDetailRow
+              key={chip.chip_id}
+              chip={chip}
+              selected={selectedCodes.has(chip.chip_code)}
+              onToggleSelect={onToggleSelect}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }
@@ -363,8 +407,10 @@ export default function AdminPage() {
         />
 
         {loadingData ? (
-          <div className="flex items-center gap-2 text-sm text-white/40">
-            <Loader2 size={14} className="animate-spin" /> Cargando…
+          <div className="flex flex-col gap-3">
+            <SkeletonClientCard expanded />
+            <SkeletonClientCard />
+            <SkeletonClientCard />
           </div>
         ) : dataError ? (
           <p className="text-sm text-red-400">{dataError}</p>

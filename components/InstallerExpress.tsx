@@ -113,7 +113,7 @@ export default function InstallerExpress({
 
   if (success) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-boreas-navy-deep px-6 text-center">
+      <main className="flex min-h-screen animate-fade-in flex-col items-center justify-center bg-boreas-navy-deep px-6 text-center">
         <CheckCircle2 size={48} className="text-boreas-cyan" />
         <h1 className="mt-4 text-xl font-semibold text-white">
           {isEditing ? "Chip actualizado" : "Chip activado"}
