@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2, Search, ChevronDown, AlertTriangle, Download, Inbox } from "lucide-react";
-import InstallerExpress from "@/components/InstallerExpress";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
-import type { ChipWithClient, ChipMetricRow, ClientSummaryRow, BillingStatus } from "@/types/database";
+import type { ChipMetricRow, ClientSummaryRow, BillingStatus } from "@/types/database";
 
 const ALERT_THRESHOLD_DAYS = 15;
 
@@ -125,8 +125,8 @@ function ClientCard({ client, chips, expanded, onToggle }: ClientCardProps) {
 }
 
 export default function AdminPage() {
+  const router = useRouter();
   const [chipCodeInput, setChipCodeInput] = useState("");
-  const [foundChip, setFoundChip] = useState<ChipWithClient | null>(null);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
@@ -152,22 +152,21 @@ export default function AdminPage() {
   }, []);
 
   async function handleSearch() {
-    if (!chipCodeInput.trim()) return;
+    const code = chipCodeInput.trim();
+    if (!code) return;
     setSearching(true);
     setSearchError(null);
-    setFoundChip(null);
 
     try {
-      const res = await fetch(`/api/chips/lookup?chip_code=${encodeURIComponent(chipCodeInput.trim())}`);
+      const res = await fetch(`/api/chips/lookup?chip_code=${encodeURIComponent(code)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error ?? "Chip no encontrado.");
       }
       const data = await res.json();
-      setFoundChip(data.chip);
+      router.push(`/admin/activar/${encodeURIComponent(data.chip.chip_code)}`);
     } catch (err) {
       setSearchError(err instanceof Error ? err.message : "Error inesperado.");
-    } finally {
       setSearching(false);
     }
   }
@@ -211,10 +210,6 @@ export default function AdminPage() {
       else next.add(clientId);
       return next;
     });
-  }
-
-  if (foundChip) {
-    return <InstallerExpress chipCode={foundChip.chip_code} chipId={foundChip.id} />;
   }
 
   return (

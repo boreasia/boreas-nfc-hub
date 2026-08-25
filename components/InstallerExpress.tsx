@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, CheckCircle2, Zap, Plus } from "lucide-react";
+import Link from "next/link";
+import { Loader2, CheckCircle2, Zap, Plus, ArrowLeft } from "lucide-react";
 import type { Client, ChipMode } from "@/types/database";
 
 interface InstallerExpressProps {
@@ -107,6 +108,12 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
         <p className="mt-2 text-sm text-white/50">
           <span className="font-mono text-white/80">{chipCode}</span> ya está en producción.
         </p>
+        <Link
+          href="/admin"
+          className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 hover:bg-white/10"
+        >
+          <ArrowLeft size={14} /> Volver al panel
+        </Link>
       </main>
     );
   }
@@ -114,9 +121,18 @@ export default function InstallerExpress({ chipCode, chipId }: InstallerExpressP
   return (
     <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
       <header className="mb-6 flex items-center justify-between">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">Instalador Express</p>
-          <h1 className="mt-1 font-mono text-lg text-white">{chipCode}</h1>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin"
+            aria-label="Volver al panel"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+          >
+            <ArrowLeft size={16} />
+          </Link>
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">Instalador Express</p>
+            <h1 className="mt-1 font-mono text-lg text-white">{chipCode}</h1>
+          </div>
         </div>
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-boreas-cyan/10 ring-1 ring-boreas-cyan/30">
           <Zap size={18} className="text-boreas-cyan" />
