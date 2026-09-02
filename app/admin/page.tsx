@@ -46,6 +46,19 @@ function chipNeedsAttention(chip: ChipMetricRow): boolean {
   return chip.is_active && chip.days_since_last_tap !== null && chip.days_since_last_tap > ALERT_THRESHOLD_DAYS;
 }
 
+// Los códigos se generan en lotes, así que el orden de inserción en la base
+// no es secuencial. Ordenamos por el número embebido en el chip_code
+// (BOREAS-2 antes que BOREAS-10) en vez de alfabéticamente.
+function chipCodeSortKey(chipCode: string): number {
+  const match = chipCode.match(/(\d+)/);
+  return match ? Number.parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
+}
+
+function compareChipCode(a: ChipMetricRow, b: ChipMetricRow): number {
+  const diff = chipCodeSortKey(a.chip_code) - chipCodeSortKey(b.chip_code);
+  return diff !== 0 ? diff : a.chip_code.localeCompare(b.chip_code);
+}
+
 function AttentionBadge({ days }: { days: number }) {
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-status-negative/10 px-2 py-0.5 text-xs text-status-negative">
@@ -281,20 +294,25 @@ export default function AdminPage() {
     }
   }
 
+  const sortedChipMetrics = useMemo(
+    () => [...chipMetrics].sort(compareChipCode),
+    [chipMetrics]
+  );
+
   const chipsByClient = useMemo(() => {
     const map = new Map<string, ChipMetricRow[]>();
-    for (const chip of chipMetrics) {
+    for (const chip of sortedChipMetrics) {
       if (!chip.client_id) continue;
       const bucket = map.get(chip.client_id) ?? [];
       bucket.push(chip);
       map.set(chip.client_id, bucket);
     }
     return map;
-  }, [chipMetrics]);
+  }, [sortedChipMetrics]);
 
   const unassignedChips = useMemo(
-    () => chipMetrics.filter((chip) => !chip.client_id),
-    [chipMetrics]
+    () => sortedChipMetrics.filter((chip) => !chip.client_id),
+    [sortedChipMetrics]
   );
 
   const normalizedFilter = filter.trim().toLowerCase();
