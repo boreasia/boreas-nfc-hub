@@ -18,13 +18,13 @@
  *   SUPABASE_SERVICE_ROLE_KEY
  *
  * Dependencias:
- *   npm install @supabase/supabase-js qrcode
+ *   npm install @supabase/supabase-js qrcode sharp
  */
 
 import { createClient } from "@supabase/supabase-js";
-import QRCode from "qrcode";
 import fs from "node:fs";
 import path from "node:path";
+import { renderChipQr } from "../lib/qr-image.mjs";
 
 function parseArgs() {
   const args = process.argv.slice(2);
@@ -101,11 +101,8 @@ async function main() {
   for (const chip of inserted) {
     const url = `${domain}/r/${chip.chip_code}`;
     const filePath = path.join(outDir, `${chip.chip_code}.png`);
-    await QRCode.toFile(filePath, url, {
-      width: 600,
-      margin: 2,
-      color: { dark: "#0D0D12", light: "#FFFFFF" },
-    });
+    const png = await renderChipQr(chip.chip_code, url);
+    fs.writeFileSync(filePath, png);
   }
 
   console.log(`✅ Listo. ${inserted.length} chips creados en Supabase (is_active=false).`);
