@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2, CheckCircle2, Zap, Plus, ArrowLeft } from "lucide-react";
+import LogoUploadField from "@/components/LogoUploadField";
 import type { Client, ChipMode } from "@/types/database";
 
 interface InstallerExpressProps {
@@ -237,17 +238,7 @@ export default function InstallerExpress({
               className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
-          <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
-              Logo (URL, opcional)
-            </label>
-            <input
-              value={logoUrl}
-              onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://…"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
-            />
-          </div>
+          <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
         </section>
       )}
 

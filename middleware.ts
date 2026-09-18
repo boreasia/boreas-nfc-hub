@@ -49,5 +49,6 @@ export const config = {
     "/api/clients",
     "/api/clients/:path*",
     "/api/feedback/list",
+    "/api/upload/:path*",
   ],
 };

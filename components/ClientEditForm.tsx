@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Loader2, Save } from "lucide-react";
+import LogoUploadField from "@/components/LogoUploadField";
 import type { Client, BillingStatus } from "@/types/database";
 
 interface ClientEditFormProps {
@@ -105,17 +106,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
-        <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
-            Logo (URL, opcional)
-          </label>
-          <input
-            value={logoUrl}
-            onChange={(e) => setLogoUrl(e.target.value)}
-            placeholder="https://…"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
-          />
-        </div>
+        <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
       </section>
 
       <section className="mb-6 flex flex-col gap-3">
