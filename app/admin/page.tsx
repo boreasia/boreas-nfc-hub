@@ -380,11 +380,7 @@ export default function AdminPage() {
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(123,79,191,0.6) 0%, rgba(74,179,232,0.25) 45%, transparent 70%)",
-        }}
+        className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
       />
       <div className="relative z-10 mx-auto max-w-2xl">
       <header className="mb-4 flex items-center justify-between">
@@ -412,7 +408,7 @@ export default function AdminPage() {
             onChange={(e) => setChipCodeInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="BOREAS-001"
-            className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
           <button
             type="button"
@@ -435,7 +431,7 @@ export default function AdminPage() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Buscar por comercio o código de chip…"
-          className="mb-4 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+          className="mb-4 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
         />
 
         {loadingData ? (

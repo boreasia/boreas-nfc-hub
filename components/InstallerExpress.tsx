@@ -117,11 +117,7 @@ export default function InstallerExpress({
       <main className="relative flex min-h-screen animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 text-center">
         <div
           aria-hidden
-          className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(123,79,191,0.6) 0%, rgba(74,179,232,0.25) 45%, transparent 70%)",
-          }}
+          className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
         />
         <div className="relative z-10 flex flex-col items-center">
           <CheckCircle2 size={48} className="text-boreas-cyan" />
@@ -156,7 +152,7 @@ export default function InstallerExpress({
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">
+            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet-bright">
               {isEditing ? "Editar chip" : "Instalador Express"}
             </p>
             <h1 className="mt-1 font-mono text-lg text-white">{chipCode}</h1>
@@ -224,7 +220,7 @@ export default function InstallerExpress({
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               placeholder="Ej: Restaurante LOS34"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
           <div>
@@ -235,7 +231,7 @@ export default function InstallerExpress({
               value={ownerWhatsapp}
               onChange={(e) => setOwnerWhatsapp(e.target.value)}
               placeholder="+57 300 000 0000"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
             />
           </div>
           <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
@@ -293,7 +289,7 @@ export default function InstallerExpress({
         type="button"
         onClick={handleActivate}
         disabled={submitting}
-        className="focus-gradient flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-boreas-violet to-boreas-cyan px-4 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-[0_0_24px_rgba(123,79,191,0.35)] transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+        className="focus-gradient btn-gradient-brand flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
         {isEditing ? "Guardar cambios" : "Vincular y activar chip"}

@@ -30,6 +30,17 @@ export default function ReviewFunnel({
   function handleStarClick(rating: number) {
     setSelectedRating(rating);
 
+    // Registro del historial completo: un evento por cada calificación (1-5),
+    // antes de ramificar. `keepalive` asegura que el POST llegue aunque el
+    // caso 4-5 navegue a Google ~800ms después. Fire-and-forget: si falla no
+    // rompe la experiencia.
+    fetch("/api/review-event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chip_id: chipId, rating }),
+      keepalive: true,
+    }).catch(() => {});
+
     if (rating >= 4) {
       setStage("redirecting");
       window.setTimeout(() => {
@@ -74,16 +85,12 @@ export default function ReviewFunnel({
       {/* Glow ambiental de fondo, sutil, propio de la identidad Boreas */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(123,79,191,0.6) 0%, rgba(74,179,232,0.25) 45%, transparent 70%)",
-        }}
+        className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
       />
 
       <div className="relative z-10 w-full max-w-sm">
         {stage === "rating" && (
-          <div className="flex flex-col items-center text-center">
+          <div className="flex animate-fade-in flex-col items-center text-center">
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -113,7 +120,7 @@ export default function ReviewFunnel({
                     onMouseEnter={() => setHoveredStar(star)}
                     onMouseLeave={() => setHoveredStar(null)}
                     onClick={() => handleStarClick(star)}
-                    className="transition-transform duration-150 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-boreas-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-boreas-navy-deep"
+                    className="transition-transform duration-150 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-boreas-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-boreas-navy-deep"
                   >
                     <Star
                       size={40}
@@ -121,7 +128,7 @@ export default function ReviewFunnel({
                       className={
                         isFilled
                           ? "fill-boreas-cyan text-boreas-cyan drop-shadow-[0_0_8px_rgba(74,179,232,0.6)]"
-                          : "text-white/25"
+                          : "text-white/40"
                       }
                     />
                   </button>
@@ -132,14 +139,14 @@ export default function ReviewFunnel({
         )}
 
         {stage === "redirecting" && (
-          <div className="flex flex-col items-center text-center">
+          <div className="flex animate-fade-in flex-col items-center text-center">
             <Loader2 size={36} className="animate-spin text-boreas-cyan" />
             <p className="mt-4 text-white/70">Gracias, te llevamos a dejar tu reseña…</p>
           </div>
         )}
 
         {stage === "feedback_form" && (
-          <div className="flex flex-col">
+          <div className="flex animate-fade-in flex-col">
             <h2 className="text-xl font-semibold text-white">
               Gracias por contarnos. ¿Qué podemos mejorar?
             </h2>
@@ -152,14 +159,14 @@ export default function ReviewFunnel({
               onChange={(e) => setComment(e.target.value)}
               placeholder="Cuéntanos qué pasó…"
               rows={4}
-              className="mt-5 w-full resize-none rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-violet focus:outline-none focus:ring-1 focus:ring-boreas-violet"
+              className="mt-5 w-full resize-none rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-boreas-violet-bright focus:outline-none focus:ring-1 focus:ring-boreas-violet-bright"
             />
 
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Tu WhatsApp (opcional, por si quieren responderte)"
-              className="mt-3 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-boreas-violet focus:outline-none focus:ring-1 focus:ring-boreas-violet"
+              className="mt-3 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-boreas-violet-bright focus:outline-none focus:ring-1 focus:ring-boreas-violet-bright"
             />
 
             {submitError && <p className="mt-3 text-sm text-red-400">{submitError}</p>}
@@ -181,7 +188,7 @@ export default function ReviewFunnel({
         )}
 
         {stage === "feedback_sent" && (
-          <div className="flex flex-col items-center text-center">
+          <div className="flex animate-fade-in flex-col items-center text-center">
             <CheckCircle2 size={44} className="text-boreas-cyan" />
             <h2 className="mt-4 text-xl font-semibold text-white">Mensaje enviado</h2>
             <p className="mt-2 text-sm text-white/50">

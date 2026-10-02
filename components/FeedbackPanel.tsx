@@ -76,7 +76,7 @@ export default function FeedbackPanel() {
           <ArrowLeft size={16} />
         </Link>
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet">Panel</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet-bright">Panel</p>
           <h1 className="mt-1 text-lg font-semibold text-white">Feedback negativo</h1>
         </div>
       </header>

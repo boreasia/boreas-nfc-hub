@@ -17,12 +17,34 @@ body {
      primarios (mismo par de colores que el gradiente de fondo del header
      de /admin). border-2 border-transparent se mantiene siempre puesto
      para que el borde no aparezca/desaparezca corriendo el layout al
-     enfocar — solo cambia el color vía border-image. */
+     enfocar — solo cambia el color vía border-image.
+     theme() en vez de hex sueltos: una sola fuente de verdad (tailwind.config.ts)
+     para los colores de marca, igual que los 2 utilities de abajo. */
   .focus-gradient {
     border: 2px solid transparent;
   }
   .focus-gradient:focus-visible {
     outline: none;
-    border-image: linear-gradient(to right, #7b4fbf, #4ab3e8) 1;
+    border-image: linear-gradient(to right, theme("colors.boreas.violet"), theme("colors.boreas.cyan")) 1;
+  }
+
+  /* Glow ambiental de fondo (orbe borroso), repetido antes como `style`
+     inline idéntico en app/admin/page.tsx, InstallerExpress.tsx y
+     ReviewFunnel.tsx — consolidado acá para no tener el mismo
+     radial-gradient con rgba sueltos copiado 3 veces. */
+  .glow-orb-brand {
+    background-image: radial-gradient(
+      circle,
+      theme("colors.boreas.violet / 60%") 0%,
+      theme("colors.boreas.cyan / 25%") 45%,
+      transparent 70%
+    );
+  }
+
+  /* Botón primario con gradiente violeta→cian + glow, repetido idéntico en
+     ClientEditForm.tsx e InstallerExpress.tsx. */
+  .btn-gradient-brand {
+    background-image: linear-gradient(to right, theme("colors.boreas.violet"), theme("colors.boreas.cyan"));
+    box-shadow: 0 0 24px theme("colors.boreas.violet / 35%");
   }
 }

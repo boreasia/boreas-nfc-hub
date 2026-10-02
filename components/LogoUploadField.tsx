@@ -62,7 +62,7 @@ export default function LogoUploadField({ value, onChange }: LogoUploadFieldProp
             </button>
           </div>
         ) : (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-white/15 text-white/20">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-white/15 text-white/40">
             <Upload size={18} />
           </div>
         )}
