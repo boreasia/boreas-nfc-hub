@@ -1,247 +1,83 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Loader2,
   Search,
-  ChevronDown,
-  AlertTriangle,
-  Download,
+  Building2,
   Inbox,
-  Pencil,
-  Zap,
   MessageCircleWarning,
-  Printer,
-  X,
-  Settings,
-  Sparkles,
+  LogOut,
+  Nfc,
+  Star,
+  ThumbsDown,
+  ChevronRight,
 } from "lucide-react";
 import BoreasBrandmark from "@/components/BoreasBrandmark";
-import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
+import type { OverviewStatsRow } from "@/types/database";
 
-const ALERT_THRESHOLD_DAYS = 15;
+// Portada de /admin: accesos directos (negocios / chips sin activar /
+// feedback negativo) + estadísticas generales del negocio. El detalle de
+// cada lista (comercios con sus propias estadísticas, chips sin activar)
+// vive en app/admin/negocios y app/admin/sin-activar — antes todo esto era
+// una sola página larga; se separó para que la portada sea un resumen, no un
+// scroll infinito.
 
-const MODE_LABEL: Record<ChipMode, string> = {
-  review_funnel: "Reseñas",
-  instagram: "Instagram",
-  pdf_menu: "PDF",
-  interactive_menu: "Menú interactivo",
-};
-
-const BILLING_LABEL: Record<BillingStatus, string> = {
-  al_dia: "Al día",
-  pendiente: "Pendiente",
-  atrasado: "Atrasado",
-};
-
-const BILLING_BADGE_CLASS: Record<BillingStatus, string> = {
-  al_dia: "bg-status-positive/10 text-status-positive",
-  pendiente: "bg-status-pending/10 text-status-pending",
-  atrasado: "bg-status-negative/10 text-status-negative",
-};
-
-function chipNeedsAttention(chip: ChipMetricRow): boolean {
-  return chip.is_active && chip.days_since_last_tap !== null && chip.days_since_last_tap > ALERT_THRESHOLD_DAYS;
-}
-
-// Los códigos se generan en lotes, así que el orden de inserción en la base
-// no es secuencial. Ordenamos por el número embebido en el chip_code
-// (BOREAS-2 antes que BOREAS-10) en vez de alfabéticamente.
-function chipCodeSortKey(chipCode: string): number {
-  const match = chipCode.match(/(\d+)/);
-  return match ? Number.parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
-}
-
-function compareChipCode(a: ChipMetricRow, b: ChipMetricRow): number {
-  const diff = chipCodeSortKey(a.chip_code) - chipCodeSortKey(b.chip_code);
-  return diff !== 0 ? diff : a.chip_code.localeCompare(b.chip_code);
-}
-
-function AttentionBadge({ days }: { days: number }) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-status-negative/10 px-2 py-0.5 text-xs text-status-negative">
-      <AlertTriangle size={12} />
-      Sin actividad hace {days}d
-    </span>
-  );
-}
-
-function QrDownloadButton({ chipCode }: { chipCode: string }) {
-  return (
-    <a
-      href={`/api/chips/${encodeURIComponent(chipCode)}/qr`}
-      download={`${chipCode}.png`}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
-    >
-      <Download size={12} /> Descargar QR
-    </a>
-  );
-}
-
-function ChipDetailRow({
-  chip,
-  selected,
-  onToggleSelect,
+function OptionCard({
+  href,
+  icon,
+  label,
+  helper,
 }: {
-  chip: ChipMetricRow;
-  selected: boolean;
-  onToggleSelect: (chipCode: string) => void;
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  helper: string;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 text-sm">
-      <div className="flex flex-wrap items-center gap-2">
-        <input
-          type="checkbox"
-          checked={selected}
-          onChange={() => onToggleSelect(chip.chip_code)}
-          aria-label={`Seleccionar ${chip.chip_code} para imprimir`}
-          className="h-4 w-4 rounded border-white/20 bg-boreas-navy accent-boreas-cyan"
-        />
-        <span className="font-mono text-white/80">{chip.chip_code}</span>
-        <span className="text-xs text-white/40">{MODE_LABEL[chip.mode]}</span>
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs ${
-            chip.is_active ? "bg-status-positive/10 text-status-positive" : "bg-white/5 text-white/40"
-          }`}
-        >
-          {chip.is_active ? "Activo" : "Pendiente"}
-        </span>
-        {chipNeedsAttention(chip) && <AttentionBadge days={chip.days_since_last_tap as number} />}
+    <Link
+      href={href}
+      className="flex items-center gap-3 rounded-xl border border-white/10 bg-boreas-navy px-4 py-4 hover:bg-white/[0.03]"
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-boreas-cyan/10 text-boreas-cyan">
+        {icon}
       </div>
-      <div className="flex items-center gap-4">
-        <span className="text-xs text-white/50">
-          {chip.total_taps} taps · {chip.negative_feedbacks} feedback
-        </span>
-        <Link
-          href={`/admin/activar/${encodeURIComponent(chip.chip_code)}`}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
-        >
-          {chip.is_active ? <Pencil size={12} /> : <Zap size={12} />}
-          {chip.is_active ? "Editar" : "Activar"}
-        </Link>
-        <QrDownloadButton chipCode={chip.chip_code} />
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-semibold text-white">{label}</p>
+        <p className="truncate text-xs text-white/40">{helper}</p>
       </div>
+      <ChevronRight size={16} className="shrink-0 text-white/30" />
+    </Link>
+  );
+}
+
+function StatTile({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-boreas-navy px-4 py-3">
+      <div className="flex items-center gap-1.5 text-white/40">
+        {icon}
+        <span className="text-[11px] uppercase tracking-wide">{label}</span>
+      </div>
+      <p className="mt-1.5 text-xl font-semibold text-white">{value}</p>
     </div>
   );
 }
 
-function SkeletonChipRow() {
+function SkeletonStatTile() {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 animate-pulse">
-      <div className="flex items-center gap-2">
-        <div className="h-4 w-4 rounded bg-white/10" />
-        <div className="h-3 w-20 rounded bg-white/10" />
-        <div className="h-4 w-14 rounded-full bg-white/10" />
-      </div>
-      <div className="flex items-center gap-2">
-        <div className="h-3 w-16 rounded bg-white/10" />
-        <div className="h-6 w-20 rounded-lg bg-white/10" />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonClientCard({ expanded = false }: { expanded?: boolean }) {
-  return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
-      <div className="flex flex-col gap-2 px-4 py-3 animate-pulse">
-        <div className="flex items-center justify-between">
-          <div className="h-4 w-32 rounded bg-white/10" />
-          <div className="h-4 w-4 rounded bg-white/10" />
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-20 rounded bg-white/10" />
-          <div className="h-3 w-14 rounded bg-white/10" />
-          <div className="h-4 w-16 rounded-full bg-white/10" />
-        </div>
-      </div>
-      {expanded && (
-        <div className="bg-boreas-navy-deep/60">
-          <SkeletonChipRow />
-          <SkeletonChipRow />
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface ClientCardProps {
-  client: ClientSummaryRow;
-  chips: ChipMetricRow[];
-  expanded: boolean;
-  onToggle: () => void;
-  selectedCodes: Set<string>;
-  onToggleSelect: (chipCode: string) => void;
-}
-
-function ClientCard({ client, chips, expanded, onToggle, selectedCodes, onToggleSelect }: ClientCardProps) {
-  const hasAlert = chips.some(chipNeedsAttention);
-
-  return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={expanded}
-        aria-controls={`chips-${client.client_id}`}
-        className="flex w-full flex-col gap-2 px-4 py-3 text-left hover:bg-white/[0.03]"
-      >
-        <div className="flex items-center justify-between">
-          <span className="font-medium text-white">{client.business_name}</span>
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/admin/comercios/${client.client_id}/editar`}
-              onClick={(e) => e.stopPropagation()}
-              aria-label={`Editar ${client.business_name}`}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white/70"
-            >
-              <Settings size={14} />
-            </Link>
-            <ChevronDown
-              size={16}
-              className={`text-white/40 transition-transform ${expanded ? "rotate-180" : ""}`}
-            />
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-white/50">
-          <span>{client.active_chips} chips activos</span>
-          <span>·</span>
-          <span>{client.total_taps} taps</span>
-          <span
-            className={`rounded-full px-2 py-0.5 ${BILLING_BADGE_CLASS[client.billing_status]}`}
-          >
-            {BILLING_LABEL[client.billing_status]}
-          </span>
-          {hasAlert && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-status-negative/10 px-2 py-0.5 text-status-negative">
-              <AlertTriangle size={12} /> Requiere atención
-            </span>
-          )}
-        </div>
-      </button>
-
-      <div
-        id={`chips-${client.client_id}`}
-        aria-hidden={!expanded}
-        className={`overflow-hidden bg-boreas-navy-deep/60 transition-all duration-300 ease-in-out ${
-          expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        {chips.length === 0 ? (
-          <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
-        ) : (
-          chips.map((chip) => (
-            <ChipDetailRow
-              key={chip.chip_id}
-              chip={chip}
-              selected={selectedCodes.has(chip.chip_code)}
-              onToggleSelect={onToggleSelect}
-            />
-          ))
-        )}
-      </div>
+    <div className="rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 animate-pulse">
+      <div className="h-3 w-16 rounded bg-white/10" />
+      <div className="mt-2 h-6 w-10 rounded bg-white/10" />
     </div>
   );
 }
@@ -252,26 +88,16 @@ export default function AdminPage() {
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
 
-  const [clients, setClients] = useState<ClientSummaryRow[]>([]);
-  const [chipMetrics, setChipMetrics] = useState<ChipMetricRow[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
-  const [dataError, setDataError] = useState<string | null>(null);
-
-  const [filter, setFilter] = useState("");
-  const [expandedClientIds, setExpandedClientIds] = useState<Set<string>>(new Set());
-  const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
+  const [stats, setStats] = useState<OverviewStatsRow | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [statsError, setStatsError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/clients/summary").then((res) => res.json()),
-      fetch("/api/chips/metrics").then((res) => res.json()),
-    ])
-      .then(([clientsData, metricsData]) => {
-        setClients(clientsData.clients ?? []);
-        setChipMetrics(metricsData.metrics ?? []);
-      })
-      .catch(() => setDataError("No se pudieron cargar los datos del panel."))
-      .finally(() => setLoadingData(false));
+    fetch("/api/stats/overview")
+      .then((res) => res.json())
+      .then((data) => setStats(data.stats ?? null))
+      .catch(() => setStatsError("No se pudieron cargar las estadísticas."))
+      .finally(() => setLoadingStats(false));
   }, []);
 
   async function handleSearch() {
@@ -294,227 +120,117 @@ export default function AdminPage() {
     }
   }
 
-  const sortedChipMetrics = useMemo(
-    () => [...chipMetrics].sort(compareChipCode),
-    [chipMetrics]
-  );
-
-  const chipsByClient = useMemo(() => {
-    const map = new Map<string, ChipMetricRow[]>();
-    for (const chip of sortedChipMetrics) {
-      if (!chip.client_id) continue;
-      const bucket = map.get(chip.client_id) ?? [];
-      bucket.push(chip);
-      map.set(chip.client_id, bucket);
-    }
-    return map;
-  }, [sortedChipMetrics]);
-
-  const unassignedChips = useMemo(
-    () => sortedChipMetrics.filter((chip) => !chip.client_id),
-    [sortedChipMetrics]
-  );
-
-  const normalizedFilter = filter.trim().toLowerCase();
-
-  // Si el filtro coincide con un código de chip dentro de un comercio
-  // colapsado, lo expandimos automáticamente para mostrar el match en vez de
-  // obligar a abrirlo a mano. Solo agrega expansiones, nunca las quita, para
-  // no pisar lo que el usuario ya abrió manualmente.
-  useEffect(() => {
-    if (!normalizedFilter) return;
-    setExpandedClientIds((prev) => {
-      let changed = false;
-      const next = new Set(prev);
-      for (const [clientId, chips] of chipsByClient) {
-        if (next.has(clientId)) continue;
-        const hasMatch = chips.some((chip) => chip.chip_code.toLowerCase().includes(normalizedFilter));
-        if (hasMatch) {
-          next.add(clientId);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [normalizedFilter, chipsByClient]);
-
-  const filteredClients = useMemo(() => {
-    if (!normalizedFilter) return clients;
-    return clients.filter((client) => {
-      if (client.business_name.toLowerCase().includes(normalizedFilter)) return true;
-      const chips = chipsByClient.get(client.client_id) ?? [];
-      return chips.some((chip) => chip.chip_code.toLowerCase().includes(normalizedFilter));
-    });
-  }, [clients, chipsByClient, normalizedFilter]);
-
-  const filteredUnassignedChips = useMemo(() => {
-    if (!normalizedFilter) return unassignedChips;
-    return unassignedChips.filter((chip) => chip.chip_code.toLowerCase().includes(normalizedFilter));
-  }, [unassignedChips, normalizedFilter]);
-
-  function toggleClient(clientId: string) {
-    setExpandedClientIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(clientId)) next.delete(clientId);
-      else next.add(clientId);
-      return next;
-    });
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+    router.push("/login");
   }
 
-  function toggleSelectChip(chipCode: string) {
-    setSelectedCodes((prev) => {
-      const next = new Set(prev);
-      if (next.has(chipCode)) next.delete(chipCode);
-      else next.add(chipCode);
-      return next;
-    });
-  }
-
-  const printHref = `/admin/imprimir?codes=${encodeURIComponent(Array.from(selectedCodes).join(","))}`;
+  const averageLabel = stats?.average_rating != null ? stats.average_rating.toFixed(1) : "—";
 
   return (
-    <main
-      className={`relative overflow-hidden bg-boreas-navy-deep px-5 py-8 ${
-        selectedCodes.size > 0 ? "pb-20" : ""
-      } min-h-screen`}
-    >
+    <main className="relative min-h-[100dvh] overflow-hidden bg-boreas-navy-deep px-5 py-8">
       <div
         aria-hidden
         className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
       />
       <div className="relative z-10 mx-auto max-w-2xl">
-      <header className="mb-4 flex items-center justify-between">
-        <BoreasBrandmark />
-        <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>
-      </header>
-      <div className="mb-4 h-0.5 w-full bg-gradient-to-r from-boreas-cyan to-boreas-violet" />
+        <header className="mb-4 flex items-center justify-between">
+          <BoreasBrandmark />
+          <div className="flex items-center gap-3">
+            <h1 className="font-cormorant text-2xl font-semibold text-white">Control Center</h1>
+            <button
+              type="button"
+              onClick={handleLogout}
+              aria-label="Cerrar sesión"
+              className="flex h-8 w-8 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white/70"
+            >
+              <LogOut size={14} />
+            </button>
+          </div>
+        </header>
+        <div className="mb-6 h-0.5 w-full bg-gradient-to-r from-boreas-cyan to-boreas-violet" />
 
-      <div className="mb-6 flex justify-end">
-        <Link
-          href="/admin/feedback"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
-        >
-          <MessageCircleWarning size={14} /> Ver feedback negativo
-        </Link>
-      </div>
+        <section className="mb-8">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            Activar chip por código
+          </label>
+          <div className="flex gap-2">
+            <input
+              value={chipCodeInput}
+              onChange={(e) => setChipCodeInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder="BOREAS-001"
+              className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            />
+            <button
+              type="button"
+              onClick={handleSearch}
+              disabled={searching}
+              className="flex items-center justify-center rounded-xl bg-boreas-violet px-4 text-white disabled:opacity-40"
+            >
+              {searching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            </button>
+          </div>
+          {searchError && <p className="mt-2 text-sm text-status-negative">{searchError}</p>}
+        </section>
 
-      <section className="mb-8">
-        <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
-          Activar chip por código
-        </label>
-        <div className="flex gap-2">
-          <input
-            value={chipCodeInput}
-            onChange={(e) => setChipCodeInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="BOREAS-001"
-            className="flex-1 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 font-mono text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+        <section className="mb-8 flex flex-col gap-3">
+          <OptionCard
+            href="/admin/negocios"
+            icon={<Building2 size={18} />}
+            label="Ver negocios"
+            helper="Comercios activos, sus chips y sus estadísticas"
           />
-          <button
-            type="button"
-            onClick={handleSearch}
-            disabled={searching}
-            className="flex items-center justify-center rounded-xl bg-boreas-violet px-4 text-white disabled:opacity-40"
-          >
-            {searching ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
-          </button>
-        </div>
-        {searchError && <p className="mt-2 text-sm text-red-400">{searchError}</p>}
-      </section>
+          <OptionCard
+            href="/admin/sin-activar"
+            icon={<Inbox size={18} />}
+            label="Ver NFC sin activar"
+            helper="Inventario pendiente de instalar"
+          />
+          <OptionCard
+            href="/admin/feedback"
+            icon={<MessageCircleWarning size={18} />}
+            label="Ver feedback negativo"
+            helper="Comentarios de reseñas de 1-3 estrellas"
+          />
+        </section>
 
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-white/40">Comercios</h2>
-        </div>
+        <section>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-white/40">
+            Estadísticas generales
+          </h2>
 
-        <input
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          placeholder="Buscar por comercio o código de chip…"
-          className="mb-4 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
-        />
-
-        {loadingData ? (
-          <div className="flex flex-col gap-3">
-            <SkeletonClientCard expanded />
-            <SkeletonClientCard />
-            <SkeletonClientCard />
-          </div>
-        ) : dataError ? (
-          <p className="text-sm text-red-400">{dataError}</p>
-        ) : clients.length === 0 && unassignedChips.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-boreas-navy px-4 py-10 text-center">
-            <Sparkles size={24} className="text-white/30" />
-            <p className="text-sm font-medium text-white/70">Todavía no hay comercios activados</p>
-            <p className="text-sm text-white/40">
-              Activa tu primer chip con el código de arriba y aparecerá aquí.
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {filteredClients.map((client) => (
-              <ClientCard
-                key={client.client_id}
-                client={client}
-                chips={chipsByClient.get(client.client_id) ?? []}
-                expanded={expandedClientIds.has(client.client_id)}
-                onToggle={() => toggleClient(client.client_id)}
-                selectedCodes={selectedCodes}
-                onToggleSelect={toggleSelectChip}
-              />
-            ))}
-
-            {filteredClients.length === 0 && normalizedFilter && (
-              <p className="text-sm text-white/40">Ningún comercio coincide con &quot;{filter}&quot;.</p>
-            )}
-
-            {filteredUnassignedChips.length > 0 && (
-              <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
-                <div className="flex items-center gap-2 bg-white/[0.03] px-4 py-3">
-                  <Inbox size={14} className="text-white/40" />
-                  <span className="text-sm font-medium text-white/70">
-                    Chips sin activar ({filteredUnassignedChips.length})
-                  </span>
-                </div>
-                {filteredUnassignedChips.map((chip) => (
-                  <ChipDetailRow
-                    key={chip.chip_id}
-                    chip={chip}
-                    selected={selectedCodes.has(chip.chip_code)}
-                    onToggleSelect={toggleSelectChip}
+          {statsError ? (
+            <p className="text-sm text-status-negative">{statsError}</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {loadingStats || !stats ? (
+                <>
+                  <SkeletonStatTile />
+                  <SkeletonStatTile />
+                  <SkeletonStatTile />
+                  <SkeletonStatTile />
+                  <SkeletonStatTile />
+                  <SkeletonStatTile />
+                </>
+              ) : (
+                <>
+                  <StatTile icon={<Nfc size={14} />} label="NFC vendidos" value={String(stats.active_chips)} />
+                  <StatTile icon={<Inbox size={14} />} label="Sin activar" value={String(stats.pending_chips)} />
+                  <StatTile icon={<Building2 size={14} />} label="Negocios" value={String(stats.total_clients)} />
+                  <StatTile icon={<Star size={14} />} label="Reseñas hechas" value={String(stats.total_reviews)} />
+                  <StatTile icon={<Star size={14} />} label="Promedio" value={averageLabel} />
+                  <StatTile
+                    icon={<ThumbsDown size={14} />}
+                    label="Reseñas negativas"
+                    value={String(stats.negative_reviews)}
                   />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </section>
-      </div>
-
-      {selectedCodes.size > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-10 border-t border-white/10 bg-boreas-navy-deep/95 backdrop-blur">
-          <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-5 py-3">
-            <span className="text-sm text-white/70">{selectedCodes.size} chip(s) seleccionados</span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedCodes(new Set())}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-white/60 hover:bg-white/10"
-              >
-                <X size={12} /> Limpiar
-              </button>
-              <a
-                href={printHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-violet px-4 py-2 text-xs font-semibold text-white hover:opacity-90"
-              >
-                <Printer size={14} /> Imprimir QR
-              </a>
+                </>
+              )}
             </div>
-          </div>
-        </div>
-      )}
+          )}
+        </section>
+      </div>
     </main>
   );
 }

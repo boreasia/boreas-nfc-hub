@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { resolveClientId } from "@/lib/resolveClient";
+import { resolveClientId, type ClientRef } from "@/lib/resolveClient";
 import type { ChipMode } from "@/types/database";
 
 interface UpdatePayload {
   chip_id: string;
   mode: ChipMode;
   destination_url?: string | null;
-  client:
-    | { id: string }
-    | { business_name: string; owner_whatsapp: string; logo_url?: string | null };
+  client: ClientRef;
 }
 
 const VALID_MODES: ChipMode[] = ["review_funnel", "instagram", "pdf_menu", "interactive_menu"];

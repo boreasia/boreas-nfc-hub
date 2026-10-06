@@ -17,8 +17,8 @@ export async function GET() {
 
 interface CreateClientPayload {
   business_name: string;
-  owner_whatsapp: string;
-  owner_email?: string | null;
+  owner_email: string;
+  owner_whatsapp?: string | null;
   logo_url?: string | null;
 }
 
@@ -31,9 +31,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "JSON inválido." }, { status: 400 });
   }
 
-  if (!body.business_name?.trim() || !body.owner_whatsapp?.trim()) {
+  // El correo es el contacto obligatorio al registrar un comercio nuevo
+  // (desde la migración 0003); WhatsApp quedó opcional.
+  if (!body.business_name?.trim() || !body.owner_email?.trim()) {
     return NextResponse.json(
-      { error: "business_name y owner_whatsapp son obligatorios." },
+      { error: "business_name y owner_email son obligatorios." },
       { status: 400 }
     );
   }
@@ -42,8 +44,8 @@ export async function POST(request: NextRequest) {
     .from("clients")
     .insert({
       business_name: body.business_name.trim(),
-      owner_whatsapp: body.owner_whatsapp.trim(),
-      owner_email: body.owner_email ?? null,
+      owner_email: body.owner_email.trim(),
+      owner_whatsapp: body.owner_whatsapp?.trim() || null,
       logo_url: body.logo_url ?? null,
     })
     .select()

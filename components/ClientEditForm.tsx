@@ -21,7 +21,8 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
   const router = useRouter();
 
   const [businessName, setBusinessName] = useState(client.business_name);
-  const [ownerWhatsapp, setOwnerWhatsapp] = useState(client.owner_whatsapp);
+  const [ownerEmail, setOwnerEmail] = useState(client.owner_email ?? "");
+  const [ownerWhatsapp, setOwnerWhatsapp] = useState(client.owner_whatsapp ?? "");
   const [logoUrl, setLogoUrl] = useState(client.logo_url ?? "");
   const [billingStatus, setBillingStatus] = useState<BillingStatus>(client.billing_status);
   const [monthlyFee, setMonthlyFee] = useState(client.monthly_fee?.toString() ?? "");
@@ -32,8 +33,8 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
   const [success, setSuccess] = useState(false);
 
   async function handleSave() {
-    if (!businessName.trim() || !ownerWhatsapp.trim()) {
-      setError("Nombre del comercio y WhatsApp son obligatorios.");
+    if (!businessName.trim() || !ownerEmail.trim()) {
+      setError("Nombre del comercio y correo son obligatorios.");
       return;
     }
 
@@ -46,7 +47,8 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           business_name: businessName,
-          owner_whatsapp: ownerWhatsapp,
+          owner_email: ownerEmail,
+          owner_whatsapp: ownerWhatsapp || null,
           logo_url: logoUrl || null,
           billing_status: billingStatus,
           monthly_fee: monthlyFee ? Number(monthlyFee) : null,
@@ -69,7 +71,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
   }
 
   return (
-    <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
       <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center gap-3">
         <Link
@@ -98,12 +100,28 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         </div>
         <div>
           <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
-            WhatsApp del dueño
+            Correo del dueño
+          </label>
+          <input
+            type="email"
+            value={ownerEmail}
+            onChange={(e) => setOwnerEmail(e.target.value)}
+            placeholder="dueño@negocio.com"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+          />
+          <p className="mt-1.5 text-[11px] text-white/40">
+            Ahí llegan la alerta de reseña negativa y el reporte quincenal.
+          </p>
+        </div>
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            WhatsApp del dueño (opcional)
           </label>
           <input
             value={ownerWhatsapp}
             onChange={(e) => setOwnerWhatsapp(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            placeholder="+57 300 000 0000"
+            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
           />
         </div>
         <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
@@ -153,7 +171,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         </div>
       </section>
 
-      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mb-4 text-sm text-status-negative">{error}</p>}
       {success && (
         <p className="mb-4 flex items-center gap-1.5 text-sm text-boreas-cyan">
           <CheckCircle2 size={14} /> Comercio actualizado.

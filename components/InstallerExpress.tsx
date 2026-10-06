@@ -37,6 +37,7 @@ export default function InstallerExpress({
   const [selectedClientId, setSelectedClientId] = useState<string>(initialClientId ?? "");
 
   const [businessName, setBusinessName] = useState("");
+  const [ownerEmail, setOwnerEmail] = useState("");
   const [ownerWhatsapp, setOwnerWhatsapp] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
 
@@ -61,7 +62,7 @@ export default function InstallerExpress({
     if (mode === "existing" && !selectedClientId) return "Selecciona un comercio.";
     if (mode === "new") {
       if (!businessName.trim()) return "El nombre del comercio es obligatorio.";
-      if (!ownerWhatsapp.trim()) return "El WhatsApp del dueño es obligatorio.";
+      if (!ownerEmail.trim()) return "El correo del dueño es obligatorio.";
     }
     if (needsDestinationUrl && !destinationUrl.trim()) {
       return "Esta modalidad necesita una URL de destino.";
@@ -93,7 +94,8 @@ export default function InstallerExpress({
               ? { id: selectedClientId }
               : {
                   business_name: businessName,
-                  owner_whatsapp: ownerWhatsapp,
+                  owner_email: ownerEmail,
+                  owner_whatsapp: ownerWhatsapp || null,
                   logo_url: logoUrl || null,
                 },
         }),
@@ -114,7 +116,7 @@ export default function InstallerExpress({
 
   if (success) {
     return (
-      <main className="relative flex min-h-screen animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 text-center">
+      <main className="relative flex min-h-[100dvh] animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 text-center">
         <div
           aria-hidden
           className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
@@ -140,7 +142,7 @@ export default function InstallerExpress({
   }
 
   return (
-    <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
       <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -225,7 +227,22 @@ export default function InstallerExpress({
           </div>
           <div>
             <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
-              WhatsApp del dueño
+              Correo del dueño
+            </label>
+            <input
+              type="email"
+              value={ownerEmail}
+              onChange={(e) => setOwnerEmail(e.target.value)}
+              placeholder="dueño@negocio.com"
+              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            />
+            <p className="mt-1.5 text-[11px] text-white/40">
+              Ahí llegan la alerta de reseña negativa y el reporte quincenal.
+            </p>
+          </div>
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+              WhatsApp del dueño (opcional)
             </label>
             <input
               value={ownerWhatsapp}
@@ -283,7 +300,7 @@ export default function InstallerExpress({
         </section>
       )}
 
-      {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
+      {error && <p className="mb-4 text-sm text-status-negative">{error}</p>}
 
       <button
         type="button"

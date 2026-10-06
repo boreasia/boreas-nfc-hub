@@ -13,7 +13,9 @@ export type BillingStatus = "al_dia" | "pendiente" | "atrasado";
 export type Client = {
   id: string;
   business_name: string;
-  owner_whatsapp: string;
+  // Opcional desde la migración 0003: el contacto que se exige al registrar
+  // un comercio nuevo es owner_email (abajo); WhatsApp quedó opcional.
+  owner_whatsapp: string | null;
   owner_email: string | null;
   logo_url: string | null;
   created_at: string;
@@ -56,6 +58,17 @@ export type Feedback = {
   created_at: string;
 };
 
+// Log completo de toda calificación (1-5) del review funnel, sin comentario.
+// `feedbacks` guarda el detalle privado de las negativas; esto es el historial
+// total para métricas (ver migración 0002_review_events_and_whatsapp.sql).
+export type ReviewEvent = {
+  id: string;
+  chip_id: string;
+  rating: number;
+  source: string;
+  created_at: string;
+};
+
 export interface ChipMetricRow {
   chip_id: string;
   chip_code: string;
@@ -76,6 +89,22 @@ export interface ClientSummaryRow {
   active_chips: number;
   total_taps: number;
   last_tap_at: string | null;
+  // Desde migración 0003 (view client_summary extendida con review_events).
+  total_reviews: number;
+  average_rating: number | null;
+  negative_reviews: number;
+}
+
+// Una sola fila (view overview_stats, migración 0003): números generales
+// para la portada de /admin.
+export interface OverviewStatsRow {
+  total_chips: number;
+  active_chips: number;
+  pending_chips: number;
+  total_clients: number;
+  total_reviews: number;
+  average_rating: number | null;
+  negative_reviews: number;
 }
 
 // @supabase/postgrest-js exige que cada tabla tenga "Relationships" (aunque
@@ -90,16 +119,20 @@ export interface Database {
     Tables: {
       clients: {
         Row: Client;
-        // owner_email/monthly_fee/next_billing_date son nullable sin default;
-        // billing_status y client_since tienen default en SQL (ver schema.sql)
-        // — todos opcionales al insertar, igual que id/created_at.
+        // owner_whatsapp/monthly_fee/next_billing_date son nullable sin
+        // default; billing_status y client_since tienen default en SQL (ver
+        // schema.sql) — todos opcionales al insertar, igual que
+        // id/created_at. owner_email queda FUERA de este Omit a propósito:
+        // sigue siendo una clave requerida en el Insert (la validación real
+        // de "no vacío" vive en app/api/clients y lib/resolveClient.ts, esto
+        // solo asegura que nadie la omita por accidente).
         Insert: Omit<
           Client,
-          "id" | "created_at" | "owner_email" | "monthly_fee" | "billing_status" | "next_billing_date" | "client_since"
+          "id" | "created_at" | "owner_whatsapp" | "monthly_fee" | "billing_status" | "next_billing_date" | "client_since"
         > & {
           id?: string;
           created_at?: string;
-          owner_email?: string | null;
+          owner_whatsapp?: string | null;
           monthly_fee?: number | null;
           billing_status?: BillingStatus;
           next_billing_date?: string | null;
@@ -130,6 +163,27 @@ export interface Database {
         Insert: Omit<TapEvent, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Omit<TapEvent, "id">>;
         Relationships: [];
+      };
+      review_events: {
+        Row: ReviewEvent;
+        Insert: Omit<ReviewEvent, "id" | "created_at" | "source"> & {
+          id?: string;
+          created_at?: string;
+          source?: string;
+        };
+        Update: Partial<Omit<ReviewEvent, "id">>;
+        // Necesario para que `.select("rating, created_at, chips(...)")` con join
+        // embebido (usado en app/api/cron/weekly-summary) resuelva en vez de
+        // colapsar a never — mismo motivo que Relationships en chips/feedbacks.
+        Relationships: [
+          {
+            foreignKeyName: "review_events_chip_id_fkey";
+            columns: ["chip_id"];
+            isOneToOne: false;
+            referencedRelation: "chips";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       feedbacks: {
         Row: Feedback;

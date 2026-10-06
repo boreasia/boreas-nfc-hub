@@ -24,8 +24,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
 interface UpdateClientPayload {
   business_name?: string;
-  owner_whatsapp?: string;
-  owner_email?: string | null;
+  owner_whatsapp?: string | null;
+  owner_email?: string;
   logo_url?: string | null;
   billing_status?: BillingStatus;
   monthly_fee?: number | null;
@@ -44,8 +44,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   if (body.business_name !== undefined && !body.business_name.trim()) {
     return NextResponse.json({ error: "business_name no puede quedar vacío." }, { status: 400 });
   }
-  if (body.owner_whatsapp !== undefined && !body.owner_whatsapp.trim()) {
-    return NextResponse.json({ error: "owner_whatsapp no puede quedar vacío." }, { status: 400 });
+  // owner_email es el contacto obligatorio (migración 0003): si se manda, no
+  // puede quedar vacío. owner_whatsapp es opcional — si se manda vacío, se
+  // guarda null en vez de rechazar la actualización.
+  if (body.owner_email !== undefined && !body.owner_email?.trim()) {
+    return NextResponse.json({ error: "owner_email no puede quedar vacío." }, { status: 400 });
   }
   if (body.billing_status !== undefined && !VALID_BILLING_STATUS.includes(body.billing_status)) {
     return NextResponse.json({ error: "billing_status inválido." }, { status: 400 });
@@ -55,8 +58,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     .from("clients")
     .update({
       ...(body.business_name !== undefined && { business_name: body.business_name.trim() }),
-      ...(body.owner_whatsapp !== undefined && { owner_whatsapp: body.owner_whatsapp.trim() }),
-      ...(body.owner_email !== undefined && { owner_email: body.owner_email }),
+      ...(body.owner_whatsapp !== undefined && { owner_whatsapp: body.owner_whatsapp?.trim() || null }),
+      ...(body.owner_email !== undefined && { owner_email: body.owner_email.trim() }),
       ...(body.logo_url !== undefined && { logo_url: body.logo_url }),
       ...(body.billing_status !== undefined && { billing_status: body.billing_status }),
       ...(body.monthly_fee !== undefined && { monthly_fee: body.monthly_fee }),
