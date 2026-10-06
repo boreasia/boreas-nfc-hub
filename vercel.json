@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/biweekly-report",
+      "schedule": "0 14 1,16 * *"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Star, Send, CheckCircle2, Loader2 } from "lucide-react";
+import { Star, Send, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
 import BoreasBrandmark from "./BoreasBrandmark";
 
 interface ReviewFunnelProps {
@@ -81,7 +81,7 @@ export default function ReviewFunnel({
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 py-12">
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 py-12">
       {/* Glow ambiental de fondo, sutil, propio de la identidad Boreas */}
       <div
         aria-hidden
@@ -147,6 +147,14 @@ export default function ReviewFunnel({
 
         {stage === "feedback_form" && (
           <div className="flex animate-fade-in flex-col">
+            <button
+              type="button"
+              onClick={() => setStage("rating")}
+              className="mb-4 flex w-fit items-center gap-1.5 text-xs text-white/40 hover:text-white/70"
+            >
+              <ArrowLeft size={12} /> Cambiar calificación
+            </button>
+
             <h2 className="text-xl font-semibold text-white">
               Gracias por contarnos. ¿Qué podemos mejorar?
             </h2>
@@ -169,13 +177,13 @@ export default function ReviewFunnel({
               className="mt-3 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-boreas-violet-bright focus:outline-none focus:ring-1 focus:ring-boreas-violet-bright"
             />
 
-            {submitError && <p className="mt-3 text-sm text-red-400">{submitError}</p>}
+            {submitError && <p className="mt-3 text-sm text-status-negative">{submitError}</p>}
 
             <button
               type="button"
               onClick={handleSubmitFeedback}
               disabled={submitting || comment.trim().length === 0}
-              className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-boreas-violet px-4 py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+              className="focus-gradient btn-gradient-brand mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90 enabled:active:scale-[0.98]"
             >
               {submitting ? (
                 <Loader2 size={16} className="animate-spin" />

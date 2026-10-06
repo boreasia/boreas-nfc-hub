@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { sendWhatsAppTemplate } from "@/lib/whatsapp";
+import { sendNegativeReviewAlertEmail } from "@/lib/email";
 
 interface FeedbackPayload {
   chip_id: string;
@@ -64,12 +66,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "No se pudo guardar el feedback." }, { status: 500 });
   }
 
+  const client = chip.clients;
+
   // 3. Disparamos el webhook de Make (no bloquea la respuesta al usuario final
   //    si falla; el feedback ya quedó guardado en la base de datos).
   const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
 
   if (makeWebhookUrl) {
-    const client = chip.clients;
     fetch(makeWebhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,6 +98,63 @@ export async function POST(request: NextRequest) {
       .catch((err) => console.error("[feedback] error llamando webhook Make:", err));
   } else {
     console.warn("[feedback] MAKE_WEBHOOK_URL no está configurado; no se notificó al comercio.");
+  }
+
+  // 4. Alerta inmediata por WhatsApp (Cloud API de Meta, directo — en paralelo
+  //    al webhook de Make). Solo para 1-2 estrellas: las de 3 se guardan pero
+  //    no disparan alerta. No bloquea la respuesta al cliente final.
+  const negativeAlertTemplate = process.env.WHATSAPP_TEMPLATE_NEGATIVE_ALERT;
+
+  if (rating <= 2 && negativeAlertTemplate && client?.owner_whatsapp) {
+    sendWhatsAppTemplate({
+      to: client.owner_whatsapp,
+      template: negativeAlertTemplate,
+      bodyParams: [
+        client.business_name ?? "tu negocio",
+        String(rating),
+        comment?.trim() || "(sin comentario)",
+        customer_contact?.trim() || "no dejó contacto",
+        chip.chip_code,
+      ],
+    })
+      .then((r) => {
+        if (r.ok) {
+          return supabaseAdmin.from("feedbacks").update({ notified: true }).eq("id", feedback.id);
+        }
+      })
+      .catch((err) => console.error("[feedback] error WhatsApp Meta:", err));
+  } else if (rating <= 2 && !negativeAlertTemplate) {
+    console.warn(
+      "[feedback] WHATSAPP_TEMPLATE_NEGATIVE_ALERT no está configurado; no se envió alerta directa por WhatsApp."
+    );
+  }
+
+  // 5. Alerta inmediata por correo (Resend — mismo umbral que WhatsApp arriba,
+  //    en paralelo, ninguna reemplaza a la otra). Reusa RESEND_API_KEY /
+  //    RESEND_FROM_EMAIL ya configurados para el reporte quincenal
+  //    (app/api/cron/biweekly-report); no hay env nueva que agregar. A
+  //    diferencia de WhatsApp, el correo no necesita plantilla pre-aprobada.
+  if (rating <= 2 && client?.owner_email) {
+    sendNegativeReviewAlertEmail({
+      to: client.owner_email,
+      businessName: client.business_name ?? "tu negocio",
+      rating,
+      comment: comment?.trim() || null,
+      customerContact: customer_contact?.trim() || null,
+      chipCode: chip.chip_code,
+    })
+      .then((r) => {
+        if (r.ok) {
+          return supabaseAdmin.from("feedbacks").update({ notified: true }).eq("id", feedback.id);
+        }
+      })
+      .catch((err) => console.error("[feedback] error correo Resend:", err));
+  } else if (rating <= 2 && !client?.owner_email) {
+    // owner_email es un dato relativamente nuevo (ver app/api/cron/biweekly-report);
+    // muchos comercios todavía no lo tienen cargado. No debe tumbar la respuesta.
+    console.warn(
+      `[feedback] "${client?.business_name ?? chip_id}" no tiene owner_email; no se envió alerta por correo.`
+    );
   }
 
   return NextResponse.json({ ok: true, feedback_id: feedback.id });

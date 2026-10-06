@@ -107,8 +107,15 @@ export default function InteractiveMenu({
   }
 
   return (
-    <main className="relative min-h-screen bg-boreas-navy-deep pb-28">
-      <header className="flex items-center gap-3 border-b border-white/10 px-5 py-5">
+    <main className="relative min-h-[100dvh] overflow-hidden bg-boreas-navy-deep pb-28">
+      {/* Mismo glow ambiental que ReviewFunnel/InstallerExpress/admin: antes
+          este componente era el único flujo de cliente final sin él. */}
+      <div
+        aria-hidden
+        className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+      />
+
+      <header className="relative z-10 flex items-center gap-3 border-b border-white/10 px-5 py-5">
         {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt={businessName} className="h-10 w-10 rounded-full object-cover" />
@@ -121,7 +128,7 @@ export default function InteractiveMenu({
       </header>
 
       {menuPdfUrl && (
-        <div className="px-5 pt-5">
+        <div className="relative z-10 px-5 pt-5">
           <a
             href={menuPdfUrl}
             target="_blank"
@@ -134,7 +141,7 @@ export default function InteractiveMenu({
         </div>
       )}
 
-      <section className="px-5 py-6">
+      <section className="relative z-10 px-5 py-6">
         {PLACEHOLDER_MENU.map((category) => {
           const isOpen = openCategory === category.id;
           return (
@@ -169,7 +176,7 @@ export default function InteractiveMenu({
                           <button
                             type="button"
                             onClick={() => addToCart(item.id)}
-                            className="flex shrink-0 items-center gap-1 rounded-lg bg-boreas-violet px-3 py-2 text-xs font-semibold text-white"
+                            className="flex shrink-0 items-center gap-1 rounded-lg bg-boreas-violet px-3 py-2 text-xs font-semibold text-white transition-transform active:scale-95"
                           >
                             <Plus size={12} /> Agregar
                           </button>
@@ -178,7 +185,7 @@ export default function InteractiveMenu({
                             <button
                               type="button"
                               onClick={() => removeFromCart(item.id)}
-                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white transition-transform active:scale-90"
                             >
                               <Minus size={12} />
                             </button>
@@ -186,7 +193,7 @@ export default function InteractiveMenu({
                             <button
                               type="button"
                               onClick={() => addToCart(item.id)}
-                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-boreas-violet text-white"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-boreas-violet text-white transition-transform active:scale-90"
                             >
                               <Plus size={12} />
                             </button>
@@ -203,19 +210,28 @@ export default function InteractiveMenu({
       </section>
 
       {cartCount > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-10 border-t border-white/10 bg-boreas-navy-deep/95 px-5 py-4 backdrop-blur">
-          <a
-            href={buildWhatsappLink()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex w-full items-center justify-between rounded-xl bg-gradient-to-r from-boreas-cyan to-boreas-violet px-5 py-4 text-sm font-bold text-boreas-navy-deep shadow-[0_0_24px_rgba(74,179,232,0.35)]"
-          >
-            <span className="flex items-center gap-2">
-              <ShoppingCart size={16} />
-              Ver pedido ({cartCount})
-            </span>
-            <span>{formatCOP(cartTotal)}</span>
-          </a>
+        <div className="fixed inset-x-0 bottom-0 z-10 animate-fade-in border-t border-white/10 bg-boreas-navy-deep/95 px-5 py-4 backdrop-blur">
+          {whatsappNumber.trim() ? (
+            <a
+              href={buildWhatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-gradient btn-gradient-brand flex w-full items-center justify-between rounded-xl px-5 py-4 text-sm font-bold text-white transition-transform active:scale-[0.98]"
+            >
+              <span className="flex items-center gap-2">
+                <ShoppingCart size={16} />
+                Ver pedido ({cartCount})
+              </span>
+              <span>{formatCOP(cartTotal)}</span>
+            </a>
+          ) : (
+            // El pedido se manda por wa.me: sin WhatsApp configurado (ahora es
+            // un dato opcional del comercio) no hay adónde mandarlo. Mejor
+            // avisar claro que un link roto a wa.me/?text=....
+            <p className="rounded-xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-white/50">
+              Este negocio no tiene WhatsApp configurado para recibir pedidos.
+            </p>
+          )}
         </div>
       )}
     </main>
