@@ -39,7 +39,7 @@ export default async function ChipRouterPage({ params }: PageProps) {
   // pero lo cubrimos para no romper la experiencia si alguien escanea un QR viejo.
   if (error || !chip) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
         <BoreasBrandmark />
         <div>
           <h1 className="text-2xl font-semibold text-white">Este código no está registrado</h1>
@@ -58,10 +58,10 @@ export default async function ChipRouterPage({ params }: PageProps) {
   // protege /admin/:path*), así que NUNCA debe exponer aquí el formulario de
   // activación (Instalador Express) — cualquiera que toque/escanee el chip
   // antes de la visita comercial podría auto-activarlo con datos arbitrarios.
-  // La única forma de activar un chip es desde /admin, protegido por Basic Auth.
+  // La única forma de activar un chip es desde /admin, protegido por login.
   if (!chip.is_active || !chip.client_id) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
         <BoreasBrandmark />
         <div>
           <h1 className="text-2xl font-semibold text-white">Este código está en proceso de instalación</h1>
@@ -80,7 +80,7 @@ export default async function ChipRouterPage({ params }: PageProps) {
     case "pdf_menu": {
       if (!chip.destination_url) {
         return (
-          <main className="flex min-h-screen items-center justify-center bg-boreas-navy-deep px-6 text-center">
+          <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-navy-deep px-6 text-center">
             <p className="text-white/70">
               Este chip está activo pero no tiene una URL de destino configurada.
             </p>
@@ -117,7 +117,7 @@ export default async function ChipRouterPage({ params }: PageProps) {
 
     default:
       return (
-        <main className="flex min-h-screen items-center justify-center bg-boreas-navy-deep px-6 text-center">
+        <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-navy-deep px-6 text-center">
           <p className="text-white/70">Modo de chip no reconocido.</p>
         </main>
       );

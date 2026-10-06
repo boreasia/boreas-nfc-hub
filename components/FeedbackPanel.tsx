@@ -27,7 +27,10 @@ function formatDate(iso: string) {
 }
 
 function RatingBadge({ rating }: { rating: number }) {
-  const color = rating <= 2 ? "bg-red-400/10 text-red-400" : "bg-amber-400/10 text-amber-400";
+  // Mismos tokens semánticos que el resto del panel (status.negative/pending
+  // en admin/page.tsx para billing/alertas), no colores Tailwind sueltos.
+  const color =
+    rating <= 2 ? "bg-status-negative/10 text-status-negative" : "bg-status-pending/10 text-status-pending";
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${color}`}>
       <Star size={12} />
@@ -65,7 +68,7 @@ export default function FeedbackPanel() {
   }, [selectedClientId]);
 
   return (
-    <main className="min-h-screen bg-boreas-navy-deep px-5 py-8">
+    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
       <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center gap-3">
         <Link
@@ -104,7 +107,7 @@ export default function FeedbackPanel() {
           <Loader2 size={14} className="animate-spin" /> Cargando…
         </div>
       ) : error ? (
-        <p className="text-sm text-red-400">{error}</p>
+        <p className="text-sm text-status-negative">{error}</p>
       ) : feedbacks.length === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-boreas-navy px-4 py-10 text-center">
           <MessageCircleWarning size={24} className="text-white/30" />

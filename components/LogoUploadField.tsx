@@ -89,7 +89,7 @@ export default function LogoUploadField({ value, onChange }: LogoUploadFieldProp
         />
       </div>
 
-      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-xs text-status-negative">{error}</p>}
     </div>
   );
 }
