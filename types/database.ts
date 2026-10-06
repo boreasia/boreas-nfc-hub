@@ -58,17 +58,6 @@ export type Feedback = {
   created_at: string;
 };
 
-// Log completo de toda calificación (1-5) del review funnel, sin comentario.
-// `feedbacks` guarda el detalle privado de las negativas; esto es el historial
-// total para métricas (ver migración 0002_review_events_and_whatsapp.sql).
-export type ReviewEvent = {
-  id: string;
-  chip_id: string;
-  rating: number;
-  source: string;
-  created_at: string;
-};
-
 export interface ChipMetricRow {
   chip_id: string;
   chip_code: string;
@@ -89,7 +78,8 @@ export interface ClientSummaryRow {
   active_chips: number;
   total_taps: number;
   last_tap_at: string | null;
-  // Desde migración 0003 (view client_summary extendida con review_events).
+  // Desde migración 0003 (view client_summary extendida con feedbacks, que
+  // solo cubre reseñas de 1-3 estrellas — las de 4-5 no quedan registradas).
   total_reviews: number;
   average_rating: number | null;
   negative_reviews: number;
@@ -163,27 +153,6 @@ export interface Database {
         Insert: Omit<TapEvent, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<Omit<TapEvent, "id">>;
         Relationships: [];
-      };
-      review_events: {
-        Row: ReviewEvent;
-        Insert: Omit<ReviewEvent, "id" | "created_at" | "source"> & {
-          id?: string;
-          created_at?: string;
-          source?: string;
-        };
-        Update: Partial<Omit<ReviewEvent, "id">>;
-        // Necesario para que `.select("rating, created_at, chips(...)")` con join
-        // embebido (usado en app/api/cron/weekly-summary) resuelva en vez de
-        // colapsar a never — mismo motivo que Relationships en chips/feedbacks.
-        Relationships: [
-          {
-            foreignKeyName: "review_events_chip_id_fkey";
-            columns: ["chip_id"];
-            isOneToOne: false;
-            referencedRelation: "chips";
-            referencedColumns: ["id"];
-          },
-        ];
       };
       feedbacks: {
         Row: Feedback;

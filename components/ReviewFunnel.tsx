@@ -30,17 +30,11 @@ export default function ReviewFunnel({
   function handleStarClick(rating: number) {
     setSelectedRating(rating);
 
-    // Registro del historial completo: un evento por cada calificación (1-5),
-    // antes de ramificar. `keepalive` asegura que el POST llegue aunque el
-    // caso 4-5 navegue a Google ~800ms después. Fire-and-forget: si falla no
-    // rompe la experiencia.
-    fetch("/api/review-event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chip_id: chipId, rating }),
-      keepalive: true,
-    }).catch(() => {});
-
+    // Nota: las de 4-5 estrellas no quedan registradas en ningún lado — van
+    // directo a Google. Hubo un intento de loguear TODO click (review_events,
+    // /api/review-event) pero esa tabla nunca se creó en producción; se
+    // abandonó en favor de que las estadísticas salgan de `feedbacks`
+    // (1-3 estrellas), ver migración 0003_email_required_stats.sql.
     if (rating >= 4) {
       setStage("redirecting");
       window.setTimeout(() => {

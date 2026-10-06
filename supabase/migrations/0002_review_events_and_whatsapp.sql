@@ -1,5 +1,13 @@
 -- ============================================================================
 -- BOREAS NFC HUB — Migración 0002: registro completo de calificaciones
+--
+-- SUPERADA — NUNCA SE APLICÓ. Verificado contra producción (ver migración
+-- 0003): la tabla review_events no existe. El registro completo de
+-- calificaciones 1-5 se abandonó; las estadísticas de reseñas
+-- (client_summary/overview_stats, migración 0003) se calculan desde
+-- `feedbacks`, que solo cubre 1-3 estrellas. No corras este archivo — se deja
+-- solo como rastro histórico de la decisión original.
+--
 -- Ejecutar completo en el SQL Editor de Supabase (Project → SQL Editor).
 -- Idempotente: usa "if not exists", se puede re-correr.
 -- ============================================================================

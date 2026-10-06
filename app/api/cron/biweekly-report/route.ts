@@ -9,6 +9,13 @@ export const dynamic = "force-dynamic";
 // negativa (rating <= 2) sigue siendo WhatsApp, vía app/api/feedback; esta
 // ruta NO la toca.
 //
+// Lee de `feedbacks`, NO de `review_events`: esa tabla nunca se creó en
+// producción (el intento, migración 0002, nunca se corrió — confirmado
+// contra la base real). Como `feedbacks` solo guarda reseñas de 1-3
+// estrellas (las de 4-5 van directo a Google sin quedar registradas), este
+// reporte también refleja solo esas, igual que client_summary/overview_stats
+// (migración 0003).
+//
 // Cadencia (ver vercel.json): día 1 y 16 de cada mes, 9am Bogotá
 // (0 14 1,16 * * en UTC) — se acerca a "cada 15 días" con fecha fija en vez de
 // contar 15 días exactos desde el último envío, que con cron estándar no es
@@ -41,12 +48,12 @@ export async function GET(request: NextRequest) {
   const windowStart = new Date(windowEnd.getTime() - WINDOW_DAYS * 24 * 60 * 60 * 1000);
 
   const { data, error } = await supabaseAdmin
-    .from("review_events")
+    .from("feedbacks")
     .select("rating, created_at, chips(client_id, clients(business_name, owner_email))")
     .gte("created_at", windowStart.toISOString());
 
   if (error) {
-    console.error("[cron/biweekly-report] error consultando review_events:", error.message);
+    console.error("[cron/biweekly-report] error consultando feedbacks:", error.message);
     return NextResponse.json({ error: "No se pudieron cargar las reseñas." }, { status: 500 });
   }
 
@@ -61,7 +68,7 @@ export async function GET(request: NextRequest) {
   } | null;
 
   for (const row of data ?? []) {
-    // PostgREST resuelve la relación many-to-one review_events→chips como objeto.
+    // PostgREST resuelve la relación many-to-one feedbacks→chips como objeto.
     const chip = (row.chips as unknown) as EmbeddedChip;
     const clientId = chip?.client_id;
     if (!clientId || !chip?.clients) continue;

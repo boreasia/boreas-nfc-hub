@@ -96,26 +96,7 @@ create table if not exists feedbacks (
 
 create index if not exists idx_feedbacks_chip_id on feedbacks (chip_id);
 
-comment on table feedbacks is 'Feedback privado capturado cuando la calificación es baja (1-3 estrellas), antes de exponer al cliente al review público.';
-
--- ---------------------------------------------------------------------------
--- TABLE: review_events (historial COMPLETO de calificaciones 1-5)
--- Ver migración 0002_review_events_and_whatsapp.sql. Un evento por cada click
--- de estrella en el review funnel, sin comentario: el detalle privado de las
--- negativas sigue en `feedbacks`. Base para las métricas semanales.
--- ---------------------------------------------------------------------------
-create table if not exists review_events (
-  id uuid primary key default gen_random_uuid(),
-  chip_id uuid not null references chips(id) on delete cascade,
-  rating int2 not null check (rating between 1 and 5),
-  source text not null default 'funnel',
-  created_at timestamptz not null default now()
-);
-
-create index if not exists idx_review_events_chip_id on review_events (chip_id);
-create index if not exists idx_review_events_created_at on review_events (created_at desc);
-
-comment on table review_events is 'Log completo de toda calificación de estrellas (1-5) del review funnel, sin comentario. feedbacks guarda el detalle privado de las negativas; esta tabla es el historial total para métricas.';
+comment on table feedbacks is 'Feedback privado capturado cuando la calificación es baja (1-3 estrellas), antes de exponer al cliente al review público. También es, hoy, la única fuente de estadísticas de reseñas (client_summary/overview_stats) — no existe un log de las de 4-5 estrellas, que van directo a Google.';
 
 -- ---------------------------------------------------------------------------
 -- RLS: activado en todas las tablas, sin policies públicas.
@@ -128,7 +109,6 @@ alter table clients enable row level security;
 alter table chips enable row level security;
 alter table tap_events enable row level security;
 alter table feedbacks enable row level security;
-alter table review_events enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- Vista de conveniencia: resumen de métricas por chip (útil para /admin)
@@ -159,35 +139,63 @@ group by c.id, c.chip_code, c.client_id, c.mode, c.is_active, cl.business_name, 
 
 -- ---------------------------------------------------------------------------
 -- Vista: actividad agregada por cliente (útil para /admin agrupado), con
--- estadísticas de reseñas desde review_events (migración 0003).
+-- estadísticas de reseñas desde feedbacks (migración 0003).
+--
+-- Cada bloque (chips activos, taps, feedbacks) se agrega en su propia
+-- subconsulta antes de unirse a clients, agrupado por client_id — si se
+-- unieran chips+tap_events+feedbacks en un solo join, cada fila de feedbacks
+-- se multiplicaría por cada fila de tap_events del mismo chip (y viceversa),
+-- inflando total_taps y distorsionando average_rating. Las subconsultas
+-- separadas evitan ese fan-out.
+--
+-- security_invoker = true: sin esto, la vista corre con los permisos de su
+-- dueño sin importar las RLS policies de quien la consulta.
 -- ---------------------------------------------------------------------------
-create or replace view client_summary as
+create or replace view client_summary
+with (security_invoker = true) as
 select
   cl.id as client_id,
   cl.business_name,
   cl.billing_status,
-  count(distinct c.id) filter (where c.is_active) as active_chips,
-  count(distinct te.id) as total_taps,
-  max(te.created_at) as last_tap_at,
-  count(distinct re.id) as total_reviews,
-  avg(re.rating) as average_rating,
-  count(distinct re.id) filter (where re.rating <= 2) as negative_reviews
+  coalesce(ch.active_chips, 0) as active_chips,
+  coalesce(t.total_taps, 0) as total_taps,
+  t.last_tap_at,
+  coalesce(f.total_reviews, 0) as total_reviews,
+  f.average_rating,
+  coalesce(f.negative_reviews, 0) as negative_reviews
 from clients cl
-left join chips c on c.client_id = cl.id
-left join tap_events te on te.chip_id = c.id
-left join review_events re on re.chip_id = c.id
-group by cl.id, cl.business_name, cl.billing_status;
+left join (
+  select client_id, count(*) filter (where is_active) as active_chips
+  from chips
+  group by client_id
+) ch on ch.client_id = cl.id
+left join (
+  select c.client_id, count(te.id) as total_taps, max(te.created_at) as last_tap_at
+  from chips c
+  join tap_events te on te.chip_id = c.id
+  group by c.client_id
+) t on t.client_id = cl.id
+left join (
+  select c.client_id,
+         count(fb.id) as total_reviews,
+         avg(fb.rating) as average_rating,
+         count(*) filter (where fb.rating <= 2) as negative_reviews
+  from chips c
+  join feedbacks fb on fb.chip_id = c.id
+  group by c.client_id
+) f on f.client_id = cl.id;
 
 -- ---------------------------------------------------------------------------
 -- Vista: una sola fila con los números generales del negocio, para la
--- portada de /admin (migración 0003).
+-- portada de /admin (migración 0003), desde feedbacks.
 -- ---------------------------------------------------------------------------
-create or replace view overview_stats as
+create or replace view overview_stats
+with (security_invoker = true) as
 select
   (select count(*) from chips) as total_chips,
   (select count(*) from chips where is_active) as active_chips,
   (select count(*) from chips where not is_active) as pending_chips,
   (select count(*) from clients) as total_clients,
-  (select count(*) from review_events) as total_reviews,
-  (select avg(rating) from review_events) as average_rating,
-  (select count(*) from review_events where rating <= 2) as negative_reviews;
+  (select count(*) from feedbacks) as total_reviews,
+  (select avg(rating) from feedbacks) as average_rating,
+  (select count(*) from feedbacks where rating <= 2) as negative_reviews;
