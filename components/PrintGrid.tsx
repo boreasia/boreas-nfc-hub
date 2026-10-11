@@ -42,7 +42,7 @@ export default function PrintGrid() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white px-6 py-8 text-boreas-navy-deep print:px-0 print:py-0">
+    <main className="min-h-screen bg-white px-6 py-8 text-boreas-ink print:px-0 print:py-0">
       <div className="mb-4 flex items-center justify-between print:hidden">
         <Link
           href="/admin"
@@ -53,7 +53,7 @@ export default function PrintGrid() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-violet px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-boreas-brick px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
         >
           <Printer size={14} /> Imprimir
         </button>

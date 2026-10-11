@@ -43,26 +43,26 @@ export default function LogoUploadField({ value, onChange }: LogoUploadFieldProp
 
   return (
     <div>
-      <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+      <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
         Logo (opcional)
       </label>
 
       <div className="flex items-center gap-3">
         {value ? (
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-boreas-cream/10 bg-boreas-surface">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={value} alt="Logo del comercio" className="h-full w-full object-contain" />
             <button
               type="button"
               onClick={() => onChange("")}
               aria-label="Quitar logo"
-              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-boreas-navy-deep text-white/70 ring-1 ring-white/20 hover:text-white"
+              className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-boreas-ink text-boreas-cream/70 ring-1 ring-boreas-cream/20 hover:text-boreas-cream"
             >
               <X size={12} />
             </button>
           </div>
         ) : (
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-white/15 text-white/40">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-dashed border-boreas-cream/15 text-boreas-cream/40">
             <Upload size={18} />
           </div>
         )}
@@ -71,7 +71,7 @@ export default function LogoUploadField({ value, onChange }: LogoUploadFieldProp
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white/70 hover:bg-white/5 disabled:opacity-40"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-sm text-boreas-cream/70 hover:bg-boreas-cream/5 disabled:opacity-40"
         >
           {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
           {uploading ? "Subiendo…" : value ? "Cambiar imagen" : "Subir imagen (PNG, JPG)"}

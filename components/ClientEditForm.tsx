@@ -71,35 +71,35 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
+    <main className="min-h-[100dvh] bg-boreas-ink px-5 py-8">
       <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center gap-3">
         <Link
           href="/admin"
           aria-label="Volver al panel"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-boreas-cream/10 bg-boreas-cream/5 text-boreas-cream/60 hover:bg-boreas-cream/10"
         >
           <ArrowLeft size={16} />
         </Link>
         <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet-bright">Editar comercio</p>
-          <h1 className="mt-1 text-lg font-semibold text-white">{client.business_name}</h1>
+          <p className="text-xs uppercase tracking-[0.2em] text-boreas-brick-bright">Editar comercio</p>
+          <h1 className="mt-1 text-lg font-semibold text-boreas-cream">{client.business_name}</h1>
         </div>
       </header>
 
       <section className="mb-6 flex flex-col gap-3">
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Nombre del comercio
           </label>
           <input
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
         </div>
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Correo del dueño
           </label>
           <input
@@ -107,21 +107,21 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             value={ownerEmail}
             onChange={(e) => setOwnerEmail(e.target.value)}
             placeholder="dueño@negocio.com"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
-          <p className="mt-1.5 text-[11px] text-white/40">
+          <p className="mt-1.5 text-[11px] text-boreas-cream/40">
             Ahí llegan la alerta de reseña negativa y el reporte quincenal.
           </p>
         </div>
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             WhatsApp del dueño (opcional)
           </label>
           <input
             value={ownerWhatsapp}
             onChange={(e) => setOwnerWhatsapp(e.target.value)}
             placeholder="+57 300 000 0000"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
         </div>
         <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
@@ -129,13 +129,13 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
 
       <section className="mb-6 flex flex-col gap-3">
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Estado de facturación
           </label>
           <select
             value={billingStatus}
             onChange={(e) => setBillingStatus(e.target.value as BillingStatus)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           >
             {BILLING_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -145,7 +145,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
           </select>
         </div>
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Tarifa mensual (opcional)
           </label>
           <input
@@ -155,25 +155,25 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
             value={monthlyFee}
             onChange={(e) => setMonthlyFee(e.target.value)}
             placeholder="0"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
         </div>
         <div>
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Próxima fecha de cobro (opcional)
           </label>
           <input
             type="date"
             value={nextBillingDate}
             onChange={(e) => setNextBillingDate(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
         </div>
       </section>
 
       {error && <p className="mb-4 text-sm text-status-negative">{error}</p>}
       {success && (
-        <p className="mb-4 flex items-center gap-1.5 text-sm text-boreas-cyan">
+        <p className="mb-4 flex items-center gap-1.5 text-sm text-boreas-mustard">
           <CheckCircle2 size={14} /> Comercio actualizado.
         </p>
       )}
@@ -182,7 +182,7 @@ export default function ClientEditForm({ client }: ClientEditFormProps) {
         type="button"
         onClick={handleSave}
         disabled={submitting}
-        className="focus-gradient btn-gradient-brand flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+        className="focus-gradient btn-gradient-brand flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-boreas-cream transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
         Guardar cambios

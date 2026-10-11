@@ -39,12 +39,12 @@ export default async function ChipRouterPage({ params }: PageProps) {
   // pero lo cubrimos para no romper la experiencia si alguien escanea un QR viejo.
   if (error || !chip) {
     return (
-      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-ink px-6 text-center">
         <BoreasBrandmark />
         <div>
-          <h1 className="text-2xl font-semibold text-white">Este código no está registrado</h1>
-          <p className="mt-2 text-sm text-white/50">
-            Código: <span className="font-mono text-white/80">{chip_code}</span>
+          <h1 className="text-2xl font-semibold text-boreas-cream">Este código no está registrado</h1>
+          <p className="mt-2 text-sm text-boreas-cream/50">
+            Código: <span className="font-mono text-boreas-cream/80">{chip_code}</span>
           </p>
         </div>
       </main>
@@ -61,14 +61,14 @@ export default async function ChipRouterPage({ params }: PageProps) {
   // La única forma de activar un chip es desde /admin, protegido por login.
   if (!chip.is_active || !chip.client_id) {
     return (
-      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-navy-deep px-6 text-center">
+      <main className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 bg-boreas-ink px-6 text-center">
         <BoreasBrandmark />
         <div>
-          <h1 className="text-2xl font-semibold text-white">Este código está en proceso de instalación</h1>
-          <p className="mt-2 text-sm text-white/50">
-            Código: <span className="font-mono text-white/80">{chip_code}</span>
+          <h1 className="text-2xl font-semibold text-boreas-cream">Este código está en proceso de instalación</h1>
+          <p className="mt-2 text-sm text-boreas-cream/50">
+            Código: <span className="font-mono text-boreas-cream/80">{chip_code}</span>
           </p>
-          <p className="mt-4 text-sm text-white/40">Vuelve a intentarlo más tarde.</p>
+          <p className="mt-4 text-sm text-boreas-cream/40">Vuelve a intentarlo más tarde.</p>
         </div>
       </main>
     );
@@ -80,8 +80,8 @@ export default async function ChipRouterPage({ params }: PageProps) {
     case "pdf_menu": {
       if (!chip.destination_url) {
         return (
-          <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-navy-deep px-6 text-center">
-            <p className="text-white/70">
+          <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-ink px-6 text-center">
+            <p className="text-boreas-cream/70">
               Este chip está activo pero no tiene una URL de destino configurada.
             </p>
           </main>
@@ -117,8 +117,8 @@ export default async function ChipRouterPage({ params }: PageProps) {
 
     default:
       return (
-        <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-navy-deep px-6 text-center">
-          <p className="text-white/70">Modo de chip no reconocido.</p>
+        <main className="flex min-h-[100dvh] items-center justify-center bg-boreas-ink px-6 text-center">
+          <p className="text-boreas-cream/70">Modo de chip no reconocido.</p>
         </main>
       );
   }

@@ -12,39 +12,176 @@ body {
   box-sizing: border-box;
 }
 
+:root {
+  /* Curva "spring" (overshoot leve, no bounce real) para que las
+     transiciones de materiales (panel de vidrio, tarjetas) se sientan
+     asentándose en vez de simplemente apareciendo. Variable CSS (no solo
+     theme de Tailwind) para poder usarla también en transition-timing-function
+     fuera de clases utilitarias. */
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 @layer utilities {
-  /* Borde con gradiente cian→violeta en focus-visible, para botones
-     primarios (mismo par de colores que el gradiente de fondo del header
-     de /admin). border-2 border-transparent se mantiene siempre puesto
-     para que el borde no aparezca/desaparezca corriendo el layout al
-     enfocar — solo cambia el color vía border-image.
+  /* Borde con gradiente ladrillo→mostaza en focus-visible, para botones
+     primarios. border-2 border-transparent se mantiene siempre puesto para
+     que el borde no aparezca/desaparezca corriendo el layout al enfocar —
+     solo cambia el color vía border-image. Es un BORDE, no un fondo bajo
+     texto, así que el fallo de contraste de mustard-como-fondo (ver
+     tailwind.config.ts) no aplica acá: como borde sobre ink/surface, brick
+     da 3.52/3.26 y mustard da bastante más — ambos superan el mínimo de
+     3:1 para contraste no-textual (bordes/foco) de WCAG.
      theme() en vez de hex sueltos: una sola fuente de verdad (tailwind.config.ts)
-     para los colores de marca, igual que los 2 utilities de abajo. */
+     para los colores de marca, igual que los utilities de abajo. */
   .focus-gradient {
     border: 2px solid transparent;
   }
   .focus-gradient:focus-visible {
     outline: none;
-    border-image: linear-gradient(to right, theme("colors.boreas.violet"), theme("colors.boreas.cyan")) 1;
+    border-image: linear-gradient(to right, theme("colors.boreas.brick"), theme("colors.boreas.mustard")) 1;
   }
 
-  /* Glow ambiental de fondo (orbe borroso), repetido antes como `style`
-     inline idéntico en app/admin/page.tsx, InstallerExpress.tsx y
-     ReviewFunnel.tsx — consolidado acá para no tener el mismo
-     radial-gradient con rgba sueltos copiado 3 veces. */
+  /* Glow ambiental de fondo (orbe borroso) — decorativo, nunca tiene texto
+     encima, así que no aplican reglas de contraste acá. */
   .glow-orb-brand {
     background-image: radial-gradient(
       circle,
-      theme("colors.boreas.violet / 60%") 0%,
-      theme("colors.boreas.cyan / 25%") 45%,
+      theme("colors.boreas.brick / 55%") 0%,
+      theme("colors.boreas.mustard / 20%") 45%,
       transparent 70%
     );
   }
 
-  /* Botón primario con gradiente violeta→cian + glow, repetido idéntico en
-     ClientEditForm.tsx e InstallerExpress.tsx. */
+  /* Botón primario: ladrillo SÓLIDO (no degradado) + brillo de vidrio
+     superior. Antes era un degradado violeta→cian con texto blanco encima;
+     acá NO se puede hacer lo mismo con brick→mustard porque blanco sobre
+     mustard da 2.14:1 (falla fuerte) y blanco sobre brick-bright da 3.46:1
+     (también falla) — cualquier punto del degradado que se acerque a esos
+     dos colores deja de ser legible. brick sólido con texto blanco sí pasa
+     (5.38:1), así que el "degradado" se queda solo como un brillo diagonal
+     sutil (blanco a transparente) que no cambia el matiz, solo simula la
+     superficie pulida de vidrio/metal — más cerca del lenguaje "Apple" que
+     pedía el brief que un degradado de dos colores de marca. */
   .btn-gradient-brand {
-    background-image: linear-gradient(to right, theme("colors.boreas.violet"), theme("colors.boreas.cyan"));
-    box-shadow: 0 0 24px theme("colors.boreas.violet / 35%");
+    background-color: theme("colors.boreas.brick");
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.22), transparent 40%);
+    box-shadow: 0 0 24px theme("colors.boreas.brick / 35%");
+  }
+
+  /* ---------------------------------------------------------------------
+     Material "vidrio": SOLO para superficies que de verdad están flotando
+     sobre contenido (el panel del login, tarjetas de módulo del funnel
+     público, barras fijas de acción) — no es un fondo decorativo para
+     cualquier caja. Tres variantes, mismo lenguaje:
+       .glass-panel      — superficie principal (login, módulo del funnel)
+       .glass-panel-soft — superficie secundaria (stat tiles, option cards)
+       .glass-bar        — barra fija (carrito, selección para imprimir)
+     No fijan border-radius a propósito (se combina con rounded-xl/2xl del
+     caller), mismo criterio que .btn-gradient-brand/.glow-orb-brand arriba.
+     El highlight interior arriba (inset box-shadow) es lo que de verdad
+     vende "vidrio" en vez de "caja semitransparente" — sin eso es el cliché
+     plano de glassmorphism. */
+  .glass-panel {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.015)),
+      linear-gradient(180deg, theme("colors.boreas.surface / 65%"), theme("colors.boreas.ink / 65%"));
+    backdrop-filter: blur(24px) saturate(140%);
+    -webkit-backdrop-filter: blur(24px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 24px 48px -16px rgba(0, 0, 0, 0.55);
+  }
+
+  .glass-panel-soft {
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01)),
+      theme("colors.boreas.surface / 55%");
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-bar {
+    background-color: theme("colors.boreas.ink / 75%");
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* Sin blur de verdad disponible (navegador viejo) o el usuario pidió
+     menos transparencia: cae a los mismos tonos planos que ya se usaban
+     antes de esta pasada, nunca a una caja transparente sin contraste.
+     Rendimiento: backdrop-filter es costoso — además de este fallback,
+     se desactiva directo en pantallas chicas (ver media query abajo), no
+     solo cuando el navegador no lo soporta. */
+  @media (prefers-reduced-transparency: reduce) {
+    .glass-panel,
+    .glass-panel-soft {
+      background-image: none;
+      background-color: theme("colors.boreas.surface");
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .glass-bar {
+      background-color: theme("colors.boreas.ink");
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* El brief pide explícitamente no anidar backdrop-filter y desactivarlo
+     en pantallas chicas por rendimiento (es la propiedad CSS más cara de
+     repintar, sobre todo con varias superficies de vidrio visibles a la vez
+     como en el dashboard nuevo). Bajo ~640px cae al mismo plano sólido que
+     prefers-reduced-transparency. */
+  @media (max-width: 640px) {
+    .glass-panel,
+    .glass-panel-soft {
+      background-image: none;
+      background-color: theme("colors.boreas.surface");
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .glass-bar {
+      background-color: theme("colors.boreas.ink / 95%");
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* Skeleton con barrido de luz en vez de solo animate-pulse plano — misma
+     idea de "el dato ya casi llega" que un shimmer de iOS/macOS. El barrido
+     es un ::after absoluto para no interferir con el contenido interno del
+     skeleton (los bloques grises ya existentes en components/admin/shared.tsx
+     y FeedbackPanel.tsx); el elemento que lleva esta clase necesita
+     position: relative + overflow-hidden, que ya traen (rounded-* + flex). */
+  .skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .skeleton-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+    animation: shimmer 1.8s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer::after {
+      animation: none;
+    }
+  }
+
+  /* El resto de la app ya usaba animate-fade-in sin este guard; se agrega
+     ahora para las dos junto con la nueva animate-glass-in, más
+     animate-pulse (Tailwind, usada por BrandLoader), en vez de dejarlas a
+     medias. */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-glass-in,
+    .animate-pulse {
+      animation: none;
+    }
   }
 }

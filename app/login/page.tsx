@@ -45,7 +45,7 @@ function LoginForm() {
   }
 
   return (
-    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6">
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-boreas-ink px-6">
       <div
         aria-hidden
         className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
@@ -54,12 +54,12 @@ function LoginForm() {
       <div className="relative z-10 w-full max-w-sm animate-fade-in">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <BoreasBrandmark />
-          <p className="text-sm text-white/40">Control Center</p>
+          <p className="text-sm text-boreas-cream/40">Control Center</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
               Usuario
             </label>
             <input
@@ -67,12 +67,12 @@ function LoginForm() {
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               autoFocus
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
               Contraseña
             </label>
             <input
@@ -80,7 +80,7 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             />
           </div>
 
@@ -93,7 +93,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={submitting || !username || !password}
-            className="focus-gradient btn-gradient-brand mt-2 flex items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90 enabled:active:scale-[0.98]"
+            className="focus-gradient btn-gradient-brand mt-2 flex items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-boreas-cream transition-opacity disabled:opacity-40 enabled:hover:opacity-90 enabled:active:scale-[0.98]"
           >
             {submitting ? <Loader2 size={16} className="animate-spin" /> : <LogIn size={16} />}
             Entrar

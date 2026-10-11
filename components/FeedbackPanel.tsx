@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Loader2, MessageCircleWarning, Star } from "lucide-react";
+import { MessageCircleWarning, Star } from "lucide-react";
 import type { Client } from "@/types/database";
 
 interface FeedbackRow {
@@ -68,30 +67,17 @@ export default function FeedbackPanel() {
   }, [selectedClientId]);
 
   return (
-    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
-      <div className="mx-auto max-w-2xl">
-      <header className="mb-6 flex items-center gap-3">
-        <Link
-          href="/admin"
-          aria-label="Volver al panel"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
-        >
-          <ArrowLeft size={16} />
-        </Link>
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet-bright">Panel</p>
-          <h1 className="mt-1 text-lg font-semibold text-white">Feedback negativo</h1>
-        </div>
-      </header>
+    <div className="mx-auto max-w-2xl">
+      <h1 className="mb-4 font-cormorant text-2xl font-semibold text-boreas-cream">Reseñas y feedback</h1>
 
       <section className="mb-6">
-        <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+        <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
           Filtrar por comercio
         </label>
         <select
           value={selectedClientId}
           onChange={(e) => setSelectedClientId(e.target.value)}
-          className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+          className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
         >
           <option value="">Todos los comercios</option>
           {clients.map((c) => (
@@ -103,41 +89,49 @@ export default function FeedbackPanel() {
       </section>
 
       {loading ? (
-        <div className="flex items-center gap-2 text-sm text-white/40">
-          <Loader2 size={14} className="animate-spin" /> Cargando…
+        <div className="flex flex-col gap-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="skeleton-shimmer rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-12 rounded-full bg-boreas-cream/10" />
+                <div className="h-4 w-32 rounded bg-boreas-cream/10" />
+              </div>
+              <div className="mt-2.5 h-3 w-full rounded bg-boreas-cream/10" />
+              <div className="mt-1.5 h-3 w-2/3 rounded bg-boreas-cream/10" />
+            </div>
+          ))}
         </div>
       ) : error ? (
         <p className="text-sm text-status-negative">{error}</p>
       ) : feedbacks.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-boreas-navy px-4 py-10 text-center">
-          <MessageCircleWarning size={24} className="text-white/30" />
-          <p className="text-sm text-white/40">No hay feedback registrado todavía.</p>
+        <div className="flex flex-col items-center gap-2 rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-10 text-center">
+          <MessageCircleWarning size={24} className="text-boreas-cream/30" />
+          <p className="text-sm text-boreas-cream/40">No hay feedback registrado todavía.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
           {feedbacks.map((fb) => (
-            <div key={fb.id} className="rounded-xl border border-white/10 bg-boreas-navy px-4 py-3">
+            <div key={fb.id} className="rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <RatingBadge rating={fb.rating} />
-                  <span className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium text-boreas-cream">
                     {fb.chips?.clients?.business_name ?? "Comercio desconocido"}
                   </span>
-                  <span className="font-mono text-xs text-white/40">{fb.chips?.chip_code}</span>
+                  <span className="font-mono text-xs text-boreas-cream/40">{fb.chips?.chip_code}</span>
                 </div>
-                <span className="text-xs text-white/40">{formatDate(fb.created_at)}</span>
+                <span className="text-xs text-boreas-cream/40">{formatDate(fb.created_at)}</span>
               </div>
 
-              {fb.comment && <p className="mt-2 text-sm text-white/70">{fb.comment}</p>}
+              {fb.comment && <p className="mt-2 text-sm text-boreas-cream/70">{fb.comment}</p>}
 
               {fb.customer_contact && (
-                <p className="mt-2 text-xs text-white/40">Contacto: {fb.customer_contact}</p>
+                <p className="mt-2 text-xs text-boreas-cream/40">Contacto: {fb.customer_contact}</p>
               )}
             </div>
           ))}
         </div>
       )}
-      </div>
-    </main>
+    </div>
   );
 }

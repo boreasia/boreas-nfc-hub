@@ -107,7 +107,7 @@ export default function InteractiveMenu({
   }
 
   return (
-    <main className="relative min-h-[100dvh] overflow-hidden bg-boreas-navy-deep pb-28">
+    <main className="relative min-h-[100dvh] overflow-hidden bg-boreas-ink pb-28">
       {/* Mismo glow ambiental que ReviewFunnel/InstallerExpress/admin: antes
           este componente era el único flujo de cliente final sin él. */}
       <div
@@ -115,16 +115,16 @@ export default function InteractiveMenu({
         className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
       />
 
-      <header className="relative z-10 flex items-center gap-3 border-b border-white/10 px-5 py-5">
+      <header className="relative z-10 flex items-center gap-3 border-b border-boreas-cream/10 px-5 py-5">
         {logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={logoUrl} alt={businessName} className="h-10 w-10 rounded-full object-cover" />
         ) : (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-sm font-bold text-white/70">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-boreas-cream/5 text-sm font-bold text-boreas-cream/70">
             {businessName.charAt(0).toUpperCase()}
           </div>
         )}
-        <h1 className="text-base font-semibold text-white">{businessName}</h1>
+        <h1 className="text-base font-semibold text-boreas-cream">{businessName}</h1>
       </header>
 
       {menuPdfUrl && (
@@ -133,7 +133,7 @@ export default function InteractiveMenu({
             href={menuPdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-boreas-cyan/40 bg-boreas-cyan/10 px-4 py-3 text-sm font-semibold text-boreas-cyan"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-boreas-mustard/40 bg-boreas-mustard/10 px-4 py-3 text-sm font-semibold text-boreas-mustard"
           >
             <FileText size={16} />
             Ver menú en PDF
@@ -145,29 +145,29 @@ export default function InteractiveMenu({
         {PLACEHOLDER_MENU.map((category) => {
           const isOpen = openCategory === category.id;
           return (
-            <div key={category.id} className="mb-3 overflow-hidden rounded-xl border border-white/10">
+            <div key={category.id} className="mb-3 overflow-hidden rounded-xl border border-boreas-cream/10">
               <button
                 type="button"
                 onClick={() => setOpenCategory(isOpen ? null : category.id)}
-                className="flex w-full items-center justify-between bg-white/5 px-4 py-3"
+                className="flex w-full items-center justify-between bg-boreas-cream/5 px-4 py-3 transition-colors hover:bg-boreas-cream/[0.08]"
               >
-                <span className="text-sm font-semibold text-white">{category.name}</span>
+                <span className="text-sm font-semibold text-boreas-cream">{category.name}</span>
                 <ChevronDown
                   size={16}
-                  className={`text-white/40 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  className={`text-boreas-cream/40 transition-transform ${isOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
               {isOpen && (
-                <div className="divide-y divide-white/5 bg-boreas-navy-deep">
+                <div className="divide-y divide-boreas-cream/5 bg-boreas-ink">
                   {category.items.map((item) => {
                     const qty = cart[item.id] ?? 0;
                     return (
                       <div key={item.id} className="flex items-center justify-between gap-3 px-4 py-4">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-white">{item.name}</p>
-                          <p className="truncate text-xs text-white/40">{item.description}</p>
-                          <p className="mt-1 text-sm font-semibold text-boreas-cyan">
+                          <p className="truncate text-sm font-medium text-boreas-cream">{item.name}</p>
+                          <p className="truncate text-xs text-boreas-cream/40">{item.description}</p>
+                          <p className="mt-1 text-sm font-semibold text-boreas-mustard">
                             {formatCOP(item.price)}
                           </p>
                         </div>
@@ -176,7 +176,7 @@ export default function InteractiveMenu({
                           <button
                             type="button"
                             onClick={() => addToCart(item.id)}
-                            className="flex shrink-0 items-center gap-1 rounded-lg bg-boreas-violet px-3 py-2 text-xs font-semibold text-white transition-transform active:scale-95"
+                            className="flex shrink-0 items-center gap-1 rounded-lg bg-boreas-brick px-3 py-2 text-xs font-semibold text-boreas-cream transition-all hover:brightness-110 active:scale-95"
                           >
                             <Plus size={12} /> Agregar
                           </button>
@@ -185,15 +185,15 @@ export default function InteractiveMenu({
                             <button
                               type="button"
                               onClick={() => removeFromCart(item.id)}
-                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white transition-transform active:scale-90"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-boreas-cream/10 text-boreas-cream transition-all hover:bg-boreas-cream/20 active:scale-90"
                             >
                               <Minus size={12} />
                             </button>
-                            <span className="w-4 text-center text-sm text-white">{qty}</span>
+                            <span className="w-4 text-center text-sm text-boreas-cream">{qty}</span>
                             <button
                               type="button"
                               onClick={() => addToCart(item.id)}
-                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-boreas-violet text-white transition-transform active:scale-90"
+                              className="flex h-7 w-7 items-center justify-center rounded-lg bg-boreas-brick text-boreas-cream transition-all hover:brightness-110 active:scale-90"
                             >
                               <Plus size={12} />
                             </button>
@@ -210,13 +210,13 @@ export default function InteractiveMenu({
       </section>
 
       {cartCount > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-10 animate-fade-in border-t border-white/10 bg-boreas-navy-deep/95 px-5 py-4 backdrop-blur">
+        <div className="fixed inset-x-0 bottom-0 z-10 animate-fade-in border-t border-boreas-cream/10 bg-boreas-ink/95 px-5 py-4 backdrop-blur">
           {whatsappNumber.trim() ? (
             <a
               href={buildWhatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="focus-gradient btn-gradient-brand flex w-full items-center justify-between rounded-xl px-5 py-4 text-sm font-bold text-white transition-transform active:scale-[0.98]"
+              className="focus-gradient btn-gradient-brand flex w-full items-center justify-between rounded-xl px-5 py-4 text-sm font-bold text-boreas-cream transition-transform active:scale-[0.98]"
             >
               <span className="flex items-center gap-2">
                 <ShoppingCart size={16} />
@@ -228,7 +228,7 @@ export default function InteractiveMenu({
             // El pedido se manda por wa.me: sin WhatsApp configurado (ahora es
             // un dato opcional del comercio) no hay adónde mandarlo. Mejor
             // avisar claro que un link roto a wa.me/?text=....
-            <p className="rounded-xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-white/50">
+            <p className="rounded-xl border border-boreas-cream/10 bg-boreas-cream/5 px-5 py-4 text-center text-sm text-boreas-cream/50">
               Este negocio no tiene WhatsApp configurado para recibir pedidos.
             </p>
           )}

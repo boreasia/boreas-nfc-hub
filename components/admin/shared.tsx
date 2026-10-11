@@ -8,7 +8,7 @@
 // cada página sigue trayendo sus datos y pasándolos por props, igual que antes.
 
 import Link from "next/link";
-import { AlertTriangle, ChevronDown, Download, Pencil, Settings, Star, Zap, MessageCircleWarning } from "lucide-react";
+import { AlertTriangle, ChevronDown, Download, Inbox, Pencil, Settings, Star, Zap, MessageCircleWarning } from "lucide-react";
 import type { ChipMetricRow, ClientSummaryRow, BillingStatus, ChipMode } from "@/types/database";
 
 export const ALERT_THRESHOLD_DAYS = 15;
@@ -63,7 +63,7 @@ export function QrDownloadButton({ chipCode }: { chipCode: string }) {
     <a
       href={`/api/chips/${encodeURIComponent(chipCode)}/qr`}
       download={`${chipCode}.png`}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-boreas-cream/10 bg-boreas-cream/5 px-3 py-1.5 text-xs font-medium text-boreas-cream/70 hover:bg-boreas-cream/10"
     >
       <Download size={12} /> Descargar QR
     </a>
@@ -80,20 +80,20 @@ export function ChipDetailRow({
   onToggleSelect: (chipCode: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 text-sm">
+    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-boreas-cream/5 px-4 py-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <input
           type="checkbox"
           checked={selected}
           onChange={() => onToggleSelect(chip.chip_code)}
           aria-label={`Seleccionar ${chip.chip_code} para imprimir`}
-          className="h-4 w-4 rounded border-white/20 bg-boreas-navy accent-boreas-cyan"
+          className="h-4 w-4 rounded border-boreas-cream/20 bg-boreas-surface accent-boreas-mustard"
         />
-        <span className="font-mono text-white/80">{chip.chip_code}</span>
-        <span className="text-xs text-white/40">{MODE_LABEL[chip.mode]}</span>
+        <span className="font-mono text-boreas-cream/80">{chip.chip_code}</span>
+        <span className="text-xs text-boreas-cream/40">{MODE_LABEL[chip.mode]}</span>
         <span
           className={`rounded-full px-2 py-0.5 text-xs ${
-            chip.is_active ? "bg-status-positive/10 text-status-positive" : "bg-white/5 text-white/40"
+            chip.is_active ? "bg-status-positive/10 text-status-positive" : "bg-boreas-cream/5 text-boreas-cream/40"
           }`}
         >
           {chip.is_active ? "Activo" : "Pendiente"}
@@ -101,12 +101,12 @@ export function ChipDetailRow({
         {chipNeedsAttention(chip) && <AttentionBadge days={chip.days_since_last_tap as number} />}
       </div>
       <div className="flex items-center gap-4">
-        <span className="text-xs text-white/50">
+        <span className="text-xs text-boreas-cream/50">
           {chip.total_taps} taps · {chip.negative_feedbacks} feedback
         </span>
         <Link
           href={`/admin/activar/${encodeURIComponent(chip.chip_code)}`}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/70 hover:bg-white/10"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-boreas-cream/10 bg-boreas-cream/5 px-3 py-1.5 text-xs font-medium text-boreas-cream/70 hover:bg-boreas-cream/10"
         >
           {chip.is_active ? <Pencil size={12} /> : <Zap size={12} />}
           {chip.is_active ? "Editar" : "Activar"}
@@ -117,17 +117,19 @@ export function ChipDetailRow({
   );
 }
 
+// skeleton-shimmer (globals.css) en vez de animate-pulse plano: barrido de
+// luz diagonal, se lee como "el dato ya casi llega" en vez de un parpadeo.
 export function SkeletonChipRow() {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/5 px-4 py-3 animate-pulse">
+    <div className="skeleton-shimmer flex flex-wrap items-center justify-between gap-2 border-t border-boreas-cream/5 px-4 py-3">
       <div className="flex items-center gap-2">
-        <div className="h-4 w-4 rounded bg-white/10" />
-        <div className="h-3 w-20 rounded bg-white/10" />
-        <div className="h-4 w-14 rounded-full bg-white/10" />
+        <div className="h-4 w-4 rounded bg-boreas-cream/10" />
+        <div className="h-3 w-20 rounded bg-boreas-cream/10" />
+        <div className="h-4 w-14 rounded-full bg-boreas-cream/10" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="h-3 w-16 rounded bg-white/10" />
-        <div className="h-6 w-20 rounded-lg bg-white/10" />
+        <div className="h-3 w-16 rounded bg-boreas-cream/10" />
+        <div className="h-6 w-20 rounded-lg bg-boreas-cream/10" />
       </div>
     </div>
   );
@@ -135,20 +137,20 @@ export function SkeletonChipRow() {
 
 export function SkeletonClientCard({ expanded = false }: { expanded?: boolean }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
-      <div className="flex flex-col gap-2 px-4 py-3 animate-pulse">
+    <div className="overflow-hidden rounded-xl border border-boreas-cream/10 bg-boreas-surface">
+      <div className="skeleton-shimmer flex flex-col gap-2 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="h-4 w-32 rounded bg-white/10" />
-          <div className="h-4 w-4 rounded bg-white/10" />
+          <div className="h-4 w-32 rounded bg-boreas-cream/10" />
+          <div className="h-4 w-4 rounded bg-boreas-cream/10" />
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-20 rounded bg-white/10" />
-          <div className="h-3 w-14 rounded bg-white/10" />
-          <div className="h-4 w-16 rounded-full bg-white/10" />
+          <div className="h-3 w-20 rounded bg-boreas-cream/10" />
+          <div className="h-3 w-14 rounded bg-boreas-cream/10" />
+          <div className="h-4 w-16 rounded-full bg-boreas-cream/10" />
         </div>
       </div>
       {expanded && (
-        <div className="bg-boreas-navy-deep/60">
+        <div className="bg-boreas-ink/60">
           <SkeletonChipRow />
           <SkeletonChipRow />
         </div>
@@ -170,40 +172,40 @@ export function ClientCard({ client, chips, expanded, onToggle, selectedCodes, o
   const hasAlert = chips.some(chipNeedsAttention);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-boreas-navy">
+    <div className="overflow-hidden rounded-xl border border-boreas-cream/10 bg-boreas-surface transition-colors hover:border-boreas-cream/20">
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
         aria-controls={`chips-${client.client_id}`}
-        className="flex w-full flex-col gap-2 px-4 py-3 text-left hover:bg-white/[0.03]"
+        className="flex w-full flex-col gap-2 px-4 py-3 text-left transition-colors hover:bg-boreas-cream/[0.06]"
       >
         <div className="flex items-center justify-between">
-          <span className="font-medium text-white">{client.business_name}</span>
+          <span className="font-medium text-boreas-cream">{client.business_name}</span>
           <div className="flex items-center gap-2">
             <Link
               href={`/admin/comercios/${client.client_id}/editar`}
               onClick={(e) => e.stopPropagation()}
               aria-label={`Editar ${client.business_name}`}
-              className="flex h-7 w-7 items-center justify-center rounded-full text-white/40 hover:bg-white/10 hover:text-white/70"
+              className="flex h-7 w-7 items-center justify-center rounded-full text-boreas-cream/40 hover:bg-boreas-cream/10 hover:text-boreas-cream/70"
             >
               <Settings size={14} />
             </Link>
             <ChevronDown
               size={16}
-              className={`text-white/40 transition-transform ${expanded ? "rotate-180" : ""}`}
+              className={`text-boreas-cream/40 transition-transform ${expanded ? "rotate-180" : ""}`}
             />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-white/50">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-boreas-cream/50">
           <span>{client.active_chips} chips activos</span>
           <span>·</span>
           <span>{client.total_taps} taps</span>
           {client.total_reviews > 0 && (
             <>
               <span>·</span>
-              <span className="inline-flex items-center gap-1 text-boreas-cyan">
-                <Star size={11} className="fill-boreas-cyan" />
+              <span className="inline-flex items-center gap-1 text-boreas-mustard">
+                <Star size={11} className="fill-boreas-mustard" />
                 {client.average_rating?.toFixed(1)} ({client.total_reviews})
               </span>
             </>
@@ -227,12 +229,15 @@ export function ClientCard({ client, chips, expanded, onToggle, selectedCodes, o
       <div
         id={`chips-${client.client_id}`}
         aria-hidden={!expanded}
-        className={`overflow-hidden bg-boreas-navy-deep/60 transition-all duration-300 ease-in-out ${
+        className={`overflow-hidden bg-boreas-ink/60 transition-all duration-300 ease-in-out ${
           expanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         {chips.length === 0 ? (
-          <p className="px-4 py-3 text-sm text-white/40">Este comercio no tiene chips vinculados.</p>
+          <div className="flex items-center gap-2 px-4 py-4 text-boreas-cream/40">
+            <Inbox size={14} className="shrink-0" />
+            <p className="text-sm">Este comercio no tiene chips vinculados todavía.</p>
+          </div>
         ) : (
           chips.map((chip) => (
             <ChipDetailRow

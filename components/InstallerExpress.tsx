@@ -116,23 +116,23 @@ export default function InstallerExpress({
 
   if (success) {
     return (
-      <main className="relative flex min-h-[100dvh] animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 text-center">
+      <main className="relative flex min-h-[100dvh] animate-fade-in flex-col items-center justify-center overflow-hidden bg-boreas-ink px-6 text-center">
         <div
           aria-hidden
           className="glow-orb-brand pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
         />
         <div className="relative z-10 flex flex-col items-center">
-          <CheckCircle2 size={48} className="text-boreas-cyan" />
-          <h1 className="mt-4 text-xl font-semibold text-white">
+          <CheckCircle2 size={48} className="text-boreas-mustard" />
+          <h1 className="mt-4 text-xl font-semibold text-boreas-cream">
             {isEditing ? "Chip actualizado" : "Chip activado"}
           </h1>
-          <p className="mt-2 text-sm text-white/50">
-            <span className="font-mono text-white/80">{chipCode}</span>{" "}
+          <p className="mt-2 text-sm text-boreas-cream/50">
+            <span className="font-mono text-boreas-cream/80">{chipCode}</span>{" "}
             {isEditing ? "quedó con los nuevos datos." : "ya está en producción."}
           </p>
           <Link
             href="/admin"
-            className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 hover:bg-white/10"
+            className="mt-6 inline-flex items-center gap-1.5 rounded-lg border border-boreas-cream/10 bg-boreas-cream/5 px-4 py-2 text-sm text-boreas-cream/70 hover:bg-boreas-cream/10"
           >
             <ArrowLeft size={14} /> Volver al panel
           </Link>
@@ -142,36 +142,38 @@ export default function InstallerExpress({
   }
 
   return (
-    <main className="min-h-[100dvh] bg-boreas-navy-deep px-5 py-8">
+    <main className="min-h-[100dvh] bg-boreas-ink px-5 py-8">
       <div className="mx-auto max-w-2xl">
       <header className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href="/admin"
             aria-label="Volver al panel"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 hover:bg-white/10"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-boreas-cream/10 bg-boreas-cream/5 text-boreas-cream/60 hover:bg-boreas-cream/10"
           >
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-boreas-violet-bright">
+            <p className="text-xs uppercase tracking-[0.2em] text-boreas-brick-bright">
               {isEditing ? "Editar chip" : "Instalador Express"}
             </p>
-            <h1 className="mt-1 font-mono text-lg text-white">{chipCode}</h1>
+            <h1 className="mt-1 font-mono text-lg text-boreas-cream">{chipCode}</h1>
           </div>
         </div>
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-boreas-cyan/10 ring-1 ring-boreas-cyan/30">
-          <Zap size={18} className="text-boreas-cyan" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-boreas-mustard/10 ring-1 ring-boreas-mustard/30">
+          <Zap size={18} className="text-boreas-mustard" />
         </div>
       </header>
 
       <section className="mb-6">
-        <div className="flex gap-2 rounded-xl bg-boreas-navy p-1">
+        <div className="flex gap-2 rounded-xl bg-boreas-surface p-1">
           <button
             type="button"
             onClick={() => setMode("existing")}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-              mode === "existing" ? "bg-boreas-violet text-white" : "text-white/50"
+              mode === "existing"
+                ? "bg-boreas-brick text-boreas-cream"
+                : "text-boreas-cream/50 hover:bg-boreas-cream/5 hover:text-boreas-cream/75"
             }`}
           >
             Comercio existente
@@ -180,7 +182,9 @@ export default function InstallerExpress({
             type="button"
             onClick={() => setMode("new")}
             className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
-              mode === "new" ? "bg-boreas-violet text-white" : "text-white/50"
+              mode === "new"
+                ? "bg-boreas-brick text-boreas-cream"
+                : "text-boreas-cream/50 hover:bg-boreas-cream/5 hover:text-boreas-cream/75"
             }`}
           >
             Nuevo comercio
@@ -190,18 +194,16 @@ export default function InstallerExpress({
 
       {mode === "existing" ? (
         <section className="mb-6">
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             Selecciona un comercio
           </label>
           {loadingClients ? (
-            <div className="flex items-center gap-2 text-sm text-white/40">
-              <Loader2 size={14} className="animate-spin" /> Cargando…
-            </div>
+            <div className="skeleton-shimmer h-[50px] rounded-xl border border-boreas-cream/10 bg-boreas-surface" />
           ) : (
             <select
               value={selectedClientId}
               onChange={(e) => setSelectedClientId(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             >
               <option value="">— Elige un comercio —</option>
               {clients.map((c) => (
@@ -215,18 +217,18 @@ export default function InstallerExpress({
       ) : (
         <section className="mb-6 flex flex-col gap-3">
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
               Nombre del comercio
             </label>
             <input
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               placeholder="Ej: Restaurante LOS34"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             />
           </div>
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
               Correo del dueño
             </label>
             <input
@@ -234,21 +236,21 @@ export default function InstallerExpress({
               value={ownerEmail}
               onChange={(e) => setOwnerEmail(e.target.value)}
               placeholder="dueño@negocio.com"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             />
-            <p className="mt-1.5 text-[11px] text-white/40">
+            <p className="mt-1.5 text-[11px] text-boreas-cream/40">
               Ahí llegan la alerta de reseña negativa y el reporte quincenal.
             </p>
           </div>
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+            <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
               WhatsApp del dueño (opcional)
             </label>
             <input
               value={ownerWhatsapp}
               onChange={(e) => setOwnerWhatsapp(e.target.value)}
               placeholder="+57 300 000 0000"
-              className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/50 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+              className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
             />
           </div>
           <LogoUploadField value={logoUrl} onChange={setLogoUrl} />
@@ -256,7 +258,7 @@ export default function InstallerExpress({
       )}
 
       <section className="mb-6">
-        <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+        <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
           Modo del chip
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -267,18 +269,18 @@ export default function InstallerExpress({
               onClick={() => setChipMode(opt.value)}
               className={`rounded-xl border px-3 py-3 text-left transition-colors ${
                 chipMode === opt.value
-                  ? "border-boreas-cyan bg-boreas-cyan/10"
-                  : "border-white/10 bg-boreas-navy"
+                  ? "border-boreas-mustard bg-boreas-mustard/10"
+                  : "border-boreas-cream/10 bg-boreas-surface hover:border-boreas-cream/20 hover:bg-boreas-cream/5"
               }`}
             >
               <p
                 className={`text-sm font-semibold ${
-                  chipMode === opt.value ? "text-boreas-cyan" : "text-white"
+                  chipMode === opt.value ? "text-boreas-mustard" : "text-boreas-cream"
                 }`}
               >
                 {opt.label}
               </p>
-              <p className="mt-0.5 text-[11px] leading-tight text-white/40">{opt.helper}</p>
+              <p className="mt-0.5 text-[11px] leading-tight text-boreas-cream/40">{opt.helper}</p>
             </button>
           ))}
         </div>
@@ -286,7 +288,7 @@ export default function InstallerExpress({
 
       {(needsDestinationUrl || chipMode === "review_funnel") && (
         <section className="mb-6">
-          <label className="mb-2 block text-xs uppercase tracking-wide text-white/40">
+          <label className="mb-2 block text-xs uppercase tracking-wide text-boreas-cream/40">
             {chipMode === "review_funnel"
               ? "URL de Google Reviews (para 4-5 estrellas)"
               : "URL de destino"}
@@ -295,7 +297,7 @@ export default function InstallerExpress({
             value={destinationUrl}
             onChange={(e) => setDestinationUrl(e.target.value)}
             placeholder="https://…"
-            className="w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-base text-white placeholder:text-white/30 focus:border-boreas-cyan focus:outline-none focus:ring-1 focus:ring-boreas-cyan"
+            className="w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-base text-boreas-cream placeholder:text-boreas-cream/30 focus:border-boreas-mustard focus:outline-none focus:ring-1 focus:ring-boreas-mustard"
           />
         </section>
       )}
@@ -306,7 +308,7 @@ export default function InstallerExpress({
         type="button"
         onClick={handleActivate}
         disabled={submitting}
-        className="focus-gradient btn-gradient-brand flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
+        className="focus-gradient btn-gradient-brand flex w-full items-center justify-center gap-2 rounded-xl px-4 py-4 text-sm font-bold uppercase tracking-wide text-boreas-cream transition-opacity disabled:opacity-40 enabled:hover:opacity-90"
       >
         {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
         {isEditing ? "Guardar cambios" : "Vincular y activar chip"}

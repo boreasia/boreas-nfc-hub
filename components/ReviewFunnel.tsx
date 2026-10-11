@@ -75,7 +75,7 @@ export default function ReviewFunnel({
   }
 
   return (
-    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-boreas-navy-deep px-6 py-12">
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-boreas-ink px-6 py-12">
       {/* Glow ambiental de fondo, sutil, propio de la identidad Boreas */}
       <div
         aria-hidden
@@ -90,16 +90,16 @@ export default function ReviewFunnel({
               <img
                 src={logoUrl}
                 alt={businessName}
-                className="mb-6 h-20 w-20 rounded-2xl object-cover ring-1 ring-white/10"
+                className="mb-6 h-20 w-20 rounded-2xl object-cover ring-1 ring-boreas-cream/10"
               />
             ) : (
-              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-boreas-navy text-2xl font-bold text-white/70 ring-1 ring-white/10">
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-boreas-surface text-2xl font-bold text-boreas-cream/70 ring-1 ring-boreas-cream/10">
                 {businessName.charAt(0).toUpperCase()}
               </div>
             )}
 
-            <p className="text-sm uppercase tracking-[0.2em] text-boreas-cyan/80">{businessName}</p>
-            <h1 className="mt-3 font-cormorant text-3xl font-semibold text-white">
+            <p className="text-sm uppercase tracking-[0.2em] text-boreas-mustard/80">{businessName}</p>
+            <h1 className="mt-3 font-cormorant text-3xl font-semibold text-boreas-cream">
               ¿Cómo fue tu experiencia hoy?
             </h1>
 
@@ -114,15 +114,15 @@ export default function ReviewFunnel({
                     onMouseEnter={() => setHoveredStar(star)}
                     onMouseLeave={() => setHoveredStar(null)}
                     onClick={() => handleStarClick(star)}
-                    className="transition-transform duration-150 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-boreas-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-boreas-navy-deep"
+                    className="transition-transform duration-150 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-boreas-mustard focus-visible:ring-offset-2 focus-visible:ring-offset-boreas-ink"
                   >
                     <Star
                       size={40}
                       strokeWidth={1.5}
                       className={
                         isFilled
-                          ? "fill-boreas-cyan text-boreas-cyan drop-shadow-[0_0_8px_rgba(74,179,232,0.6)]"
-                          : "text-white/40"
+                          ? "fill-boreas-mustard text-boreas-mustard drop-shadow-[0_0_8px_rgba(74,179,232,0.6)]"
+                          : "text-boreas-cream/40"
                       }
                     />
                   </button>
@@ -134,8 +134,8 @@ export default function ReviewFunnel({
 
         {stage === "redirecting" && (
           <div className="flex animate-fade-in flex-col items-center text-center">
-            <Loader2 size={36} className="animate-spin text-boreas-cyan" />
-            <p className="mt-4 text-white/70">Gracias, te llevamos a dejar tu reseña…</p>
+            <Loader2 size={36} className="animate-spin text-boreas-mustard" />
+            <p className="mt-4 text-boreas-cream/70">Gracias, te llevamos a dejar tu reseña…</p>
           </div>
         )}
 
@@ -144,15 +144,15 @@ export default function ReviewFunnel({
             <button
               type="button"
               onClick={() => setStage("rating")}
-              className="mb-4 flex w-fit items-center gap-1.5 text-xs text-white/40 hover:text-white/70"
+              className="mb-4 flex w-fit items-center gap-1.5 text-xs text-boreas-cream/40 hover:text-boreas-cream/70"
             >
               <ArrowLeft size={12} /> Cambiar calificación
             </button>
 
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-semibold text-boreas-cream">
               Gracias por contarnos. ¿Qué podemos mejorar?
             </h2>
-            <p className="mt-1 text-sm text-white/50">
+            <p className="mt-1 text-sm text-boreas-cream/50">
               Esto se envía directo al equipo de {businessName}, en privado.
             </p>
 
@@ -161,14 +161,14 @@ export default function ReviewFunnel({
               onChange={(e) => setComment(e.target.value)}
               placeholder="Cuéntanos qué pasó…"
               rows={4}
-              className="mt-5 w-full resize-none rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-boreas-violet-bright focus:outline-none focus:ring-1 focus:ring-boreas-violet-bright"
+              className="mt-5 w-full resize-none rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-sm text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-brick-bright focus:outline-none focus:ring-1 focus:ring-boreas-brick-bright"
             />
 
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Tu WhatsApp (opcional, por si quieren responderte)"
-              className="mt-3 w-full rounded-xl border border-white/10 bg-boreas-navy px-4 py-3 text-sm text-white placeholder:text-white/50 focus:border-boreas-violet-bright focus:outline-none focus:ring-1 focus:ring-boreas-violet-bright"
+              className="mt-3 w-full rounded-xl border border-boreas-cream/10 bg-boreas-surface px-4 py-3 text-sm text-boreas-cream placeholder:text-boreas-cream/50 focus:border-boreas-brick-bright focus:outline-none focus:ring-1 focus:ring-boreas-brick-bright"
             />
 
             {submitError && <p className="mt-3 text-sm text-status-negative">{submitError}</p>}
@@ -177,7 +177,7 @@ export default function ReviewFunnel({
               type="button"
               onClick={handleSubmitFeedback}
               disabled={submitting || comment.trim().length === 0}
-              className="focus-gradient btn-gradient-brand mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-40 enabled:hover:opacity-90 enabled:active:scale-[0.98]"
+              className="focus-gradient btn-gradient-brand mt-5 flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-boreas-cream transition-opacity disabled:opacity-40 enabled:hover:opacity-90 enabled:active:scale-[0.98]"
             >
               {submitting ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -191,9 +191,9 @@ export default function ReviewFunnel({
 
         {stage === "feedback_sent" && (
           <div className="flex animate-fade-in flex-col items-center text-center">
-            <CheckCircle2 size={44} className="text-boreas-cyan" />
-            <h2 className="mt-4 text-xl font-semibold text-white">Mensaje enviado</h2>
-            <p className="mt-2 text-sm text-white/50">
+            <CheckCircle2 size={44} className="text-boreas-mustard" />
+            <h2 className="mt-4 text-xl font-semibold text-boreas-cream">Mensaje enviado</h2>
+            <p className="mt-2 text-sm text-boreas-cream/50">
               El equipo de {businessName} lo va a leer. Gracias por tomarte el tiempo.
             </p>
           </div>
@@ -201,7 +201,7 @@ export default function ReviewFunnel({
       </div>
 
       <footer className="relative z-10 mt-12 flex flex-col items-center gap-1.5 opacity-50">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-white/50">Powered by</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-boreas-cream/50">Powered by</p>
         <BoreasBrandmark size="small" />
       </footer>
     </main>
